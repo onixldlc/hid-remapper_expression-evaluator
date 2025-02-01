@@ -5,7 +5,6 @@
  */
 const MAX_DEPTH = 100;
 
-// Add globals for debugging: evaluation stack and registers.
 const debugStack = [];
 const registers = { store: {}, recall: {} };
 
@@ -29,31 +28,56 @@ function highlightTokens(tokens, start, end) {
  * that receives the evaluated operand values (in order) and returns the result.
  */
 const operatorFunctions = {
-  add: { operands: 2, fn: ([a, b]) => a + b },
-  sub: { operands: 2, fn: ([a, b]) => a - b },
-  mul: { operands: 2, fn: ([a, b]) => a * b },
-  div: { operands: 2, fn: ([a, b]) => b === 0 ? 0 : a / b },
-  mod: { operands: 2, fn: ([a, b]) => {
-    if (b === 0) throw new Error("Evaluation error: modulo by zero");
-    return a % b;
-  }},
-  eq: { operands: 2, fn: ([a, b]) => a === b ? 1 : 0 },
-  gt: { operands: 2, fn: ([a, b]) => a > b ? 1 : 0 },
-  lt: { operands: 2, fn: ([a, b]) => a < b ? 1 : 0 },
-  not: { operands: 1, fn: ([a]) => a === 0 ? 1 : 0 },
-  abs: { operands: 1, fn: ([a]) => Math.abs(a) },
-  sign: { operands: 1, fn: ([a]) => a > 0 ? 1 : (a < 0 ? -1 : 0) },
-  sin: { operands: 1, fn: ([a]) => {
-    const radians = a * Math.PI / 180;
-    return Math.sin(radians);
-  }},
-  cos: { operands: 1, fn: ([a]) => {
-    const radians = a * Math.PI / 180;
-    return Math.cos(radians);
-  }},
-  round: { operands: 1, fn: ([a]) => Math.round(a) },
-  ifte: { operands: 3, fn: ([cond, thenVal, elseVal]) => cond !== 0 ? thenVal : elseVal }
-};
+    add: { operands: 2, fn: ([a, b]) => a + b },
+    sub: { operands: 2, fn: ([a, b]) => a - b },
+    mul: { operands: 2, fn: ([a, b]) => a * b },
+    div: { operands: 2, fn: ([a, b]) => b === 0 ? 0 : a / b },
+    mod: { operands: 2, fn: ([a, b]) => {
+      if (b === 0) throw new Error("Evaluation error: modulo by zero");
+      return a % b;
+    }},
+    eq: { operands: 2, fn: ([a, b]) => a === b ? 1 : 0 },
+    gt: { operands: 2, fn: ([a, b]) => a > b ? 1 : 0 },
+    lt: { operands: 2, fn: ([a, b]) => a < b ? 1 : 0 },
+    not: { operands: 1, fn: ([a]) => a === 0 ? 1 : 0 },
+    abs: { operands: 1, fn: ([a]) => Math.abs(a) },
+    sign: { operands: 1, fn: ([a]) => a > 0 ? 1 : (a < 0 ? -1 : 0) },
+    sin: { operands: 1, fn: ([a]) => {
+      const radians = a * Math.PI / 180;
+      return Math.sin(radians);
+    }},
+    cos: { operands: 1, fn: ([a]) => {
+      const radians = a * Math.PI / 180;
+      return Math.cos(radians);
+    }},
+    round: { operands: 1, fn: ([a]) => Math.round(a) },
+    ifte: { operands: 3, fn: ([cond, thenVal, elseVal]) => cond !== 0 ? thenVal : elseVal },
+    
+    // --- Existing Operators ---
+    input_state: { operands: 1, fn: ([usage]) => {
+      return Math.floor(Math.random() * 256);
+    }},
+    input_state_binary: { operands: 1, fn: ([usage]) => {
+      return Math.random() > 0.5 ? 1 : 0;
+    }},
+    // --- New Operators ---
+    prev_input_state_binary: { operands: 1, fn: ([usage]) => {
+      return Math.random() > 0.5 ? 1 : 0;
+    }},
+    bitwise_or: { operands: 2, fn: ([a, b]) => a | b },
+    dup: { operands: 1, fn: ([a]) => [a, a] },
+    store: { operands: 2, fn: ([value, reg]) => {
+      registers.store[reg] = value;
+      return value;
+    }},
+    recall: { operands: 1, fn: ([reg]) => {
+      return registers.store.hasOwnProperty(reg) ? registers.store[reg] : 0;
+    }},
+    time: { operands: 0, fn: () => {
+      return Date.now();
+    }},
+    swap: { operands: 2, fn: ([a, b]) => [b, a] }
+  };
 
 /**
  * Simulates RPN evaluation step-by-step and calls debug callbacks.
@@ -63,7 +87,9 @@ const operatorFunctions = {
  * @returns {number} - Final result.
  */
 function simulateRPN(expression, debugCallback) {
+  expression = expression.replace(/\/\*[\s\S]*?\*\//g, "");
   let tokens = expression.trim().split(/\s+/);
+
   const updateDebug = (highlightStart, highlightEnd, extra = {}) => {
     if (debugCallback && typeof debugCallback.callback === "function") {
       const defaultData = {
@@ -114,13 +140,24 @@ function simulateRPN(expression, debugCallback) {
         operation: token
       });
       // Compute result and splice tokens.
-      const opResult = opFunc.fn(operands.map(o => Number(o.value)));
-      tokens.splice(spanStart, spanEnd - spanStart + 1, opResult.toString());
-      // Post-collapse debug callback now logs the collapsed token as literal.
-      updateDebug(spanStart, spanStart, { x: opResult, operation: "literal" });
-      stack.push({ value: opResult, pos: spanStart });
-      // Set i to skip the operator-produced token.
-      i = spanStart + 1;
+      const evaluatedOperands = operands.map(o => Number(o.value));
+      const opResult = opFunc.fn(evaluatedOperands);
+      let insertedTokens = [];
+      if (Array.isArray(opResult)) {
+        insertedTokens = opResult.map(r => r.toString());
+        tokens.splice(spanStart, spanEnd - spanStart + 1, ...insertedTokens);
+        for (let k = 0; k < insertedTokens.length; k++) {
+          stack.push({ value: insertedTokens[k], pos: spanStart + k });
+        }
+        updateDebug(spanStart, spanStart + insertedTokens.length - 1, { x: insertedTokens.join(" "), operation: "literal" });
+        i = spanStart + insertedTokens.length;
+      } else {
+        insertedTokens = [opResult.toString()];
+        tokens.splice(spanStart, spanEnd - spanStart + 1, opResult.toString());
+        stack.push({ value: opResult, pos: spanStart });
+        updateDebug(spanStart, spanStart, { x: opResult, operation: "literal" });
+        i = spanStart + 1;
+      }
     }
   }
   if (stack.length !== 1) {
