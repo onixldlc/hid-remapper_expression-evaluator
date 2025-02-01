@@ -64,7 +64,6 @@ const operatorFunctions = {
  */
 function simulateRPN(expression, debugCallback) {
   let tokens = expression.trim().split(/\s+/);
-  // Copy tokens to display state.
   const updateDebug = (highlightStart, highlightEnd, extra = {}) => {
     if (debugCallback && typeof debugCallback.callback === "function") {
       const defaultData = {
@@ -74,8 +73,8 @@ function simulateRPN(expression, debugCallback) {
         startPos: highlightStart,
         endPos: highlightEnd,
         x: null,
-        y: undefined,
-        z: undefined,
+        y: null,
+        z: null,
         operation: "literal",
         stack: [],
         registers
@@ -84,15 +83,16 @@ function simulateRPN(expression, debugCallback) {
     }
   };
 
-  // Process tokens with a stack holding objects {value, pos} where pos = index in tokens.
+  // Use a while-loop so we can control skipping operator-generated tokens.
   const stack = [];
-  // Process tokens in one pass.
-  for (let i = 0; i < tokens.length; i++) {
+  let i = 0;
+  while (i < tokens.length) {
     const token = tokens[i];
     if (operatorFunctions[token] === undefined) {
-      // Literal token: provide numeric value and operation "literal".
+      // Literal token.
       updateDebug(i, i, { x: Number(token), operation: "literal" });
       stack.push({ value: token, pos: i });
+      i++;
     } else {
       // Operator token.
       const opFunc = operatorFunctions[token];
@@ -100,31 +100,27 @@ function simulateRPN(expression, debugCallback) {
       if (stack.length < count) {
         throw new Error(`Insufficient operands for operator '${token}'`);
       }
-      // Pop operands in order.
       const operands = [];
       for (let j = 0; j < count; j++) {
         operands.unshift(stack.pop());
       }
-      // Determine span in tokens: from first operand's pos to current index i.
       const spanStart = operands[0].pos;
       const spanEnd = i;
-      // Pre-collapse with operator details.
+      // Pre-collapse debug callback.
       updateDebug(spanStart, spanEnd, {
         x: operands[0].value,
-        y: operands[1] ? operands[1].value : undefined,
-        z: operands[2] ? operands[2].value : undefined,
+        y: operands[1] ? operands[1].value : null,
+        z: operands[2] ? operands[2].value : null,
         operation: token
       });
-      // Compute result.
+      // Compute result and splice tokens.
       const opResult = opFunc.fn(operands.map(o => Number(o.value)));
-      // Replace tokens from spanStart to spanEnd with result.
       tokens.splice(spanStart, spanEnd - spanStart + 1, opResult.toString());
-      // Post-collapse: report collapsed token.
-      updateDebug(spanStart, spanStart, { x: opResult, operation: token });
-      // Push result with new position.
+      // Post-collapse debug callback now logs the collapsed token as literal.
+      updateDebug(spanStart, spanStart, { x: opResult, operation: "literal" });
       stack.push({ value: opResult, pos: spanStart });
-      // Since tokens array is now shorter, adjust i to spanStart.
-      i = spanStart;
+      // Set i to skip the operator-produced token.
+      i = spanStart + 1;
     }
   }
   if (stack.length !== 1) {
