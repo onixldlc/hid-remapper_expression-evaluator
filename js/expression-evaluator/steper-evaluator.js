@@ -5,6 +5,7 @@
  */
 const MAX_DEPTH = 100;
 
+// Add globals for debugging: evaluation stack and registers.
 const debugStack = [];
 const registers = { store: {}, recall: {} };
 
@@ -21,6 +22,14 @@ function highlightTokens(tokens, start, end) {
     return t;
   }).join(" ");
 }
+
+// Template for simulation environment variables.
+// Users can preset these values to control the behavior of random-based operators.
+const simulationEnv = {
+  input_state: undefined,            // Set to a number (0-255) to control input_state.
+  input_state_binary: undefined,     // Set to 0 or 1 to control input_state_binary.
+  prev_input_state_binary: undefined // Set to 0 or 1 to control prev_input_state_binary.
+};
 
 /**
  * Mapping of supported operators to their evaluation functions and operand count.
@@ -55,14 +64,20 @@ const operatorFunctions = {
     
     // --- Existing Operators ---
     input_state: { operands: 1, fn: ([usage]) => {
-      return Math.floor(Math.random() * 256);
+      return simulationEnv.input_state !== undefined 
+        ? simulationEnv.input_state 
+        : Math.floor(Math.random() * 256);
     }},
     input_state_binary: { operands: 1, fn: ([usage]) => {
-      return Math.random() > 0.5 ? 1 : 0;
+      return simulationEnv.input_state_binary !== undefined 
+        ? simulationEnv.input_state_binary 
+        : (Math.random() > 0.5 ? 1 : 0);
     }},
     // --- New Operators ---
     prev_input_state_binary: { operands: 1, fn: ([usage]) => {
-      return Math.random() > 0.5 ? 1 : 0;
+      return simulationEnv.prev_input_state_binary !== undefined 
+        ? simulationEnv.prev_input_state_binary 
+        : (Math.random() > 0.5 ? 1 : 0);
     }},
     bitwise_or: { operands: 2, fn: ([a, b]) => a | b },
     dup: { operands: 1, fn: ([a]) => [a, a] },
@@ -93,10 +108,12 @@ function simulateRPN(expression, debugCallback) {
 
   const updateDebug = (highlightStart, highlightEnd, extra = {}) => {
     if (debugCallback && typeof debugCallback.callback === "function") {
+      const exactEvaluation = tokens.slice(highlightStart, highlightEnd + 1).join(" ");
       const defaultData = {
         fullExpression: tokens.join(" "),
         highlightedExpression: highlightTokens(tokens, highlightStart, highlightEnd),
-        evaluatedExpression: tokens.slice(highlightStart, highlightEnd + 1).join(" "),
+        evaluatedExpression: exactEvaluation,
+        plainEvaluation: exactEvaluation,
         startPos: highlightStart,
         endPos: highlightEnd,
         x: null,
@@ -170,6 +187,7 @@ function simulateRPN(expression, debugCallback) {
       fullExpression: tokens.join(" "),
       highlightedExpression: highlightTokens(tokens, 0, 0),
       evaluatedExpression: tokens.join(" "),
+      plainEvaluation: tokens.join(" "),
       startPos: 0,
       endPos: 0,
       x: Number(tokens[0]),
@@ -211,7 +229,7 @@ dup
 
 // Example usage:
 try {
-  const expr = expression;
+  const expr = expression; // ((2 + 3) * 4) = 20
   const result = debugEvaluate(expr, {
     callback: (info) => {
       console.log("Debug Info:", info);
