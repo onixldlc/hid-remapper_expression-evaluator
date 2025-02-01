@@ -87,6 +87,7 @@ const operatorFunctions = {
  * @returns {number} - Final result.
  */
 function simulateRPN(expression, debugCallback) {
+  // Remove comment blocks (/* ... */) from the expression.
   expression = expression.replace(/\/\*[\s\S]*?\*\//g, "");
   let tokens = expression.trim().split(/\s+/);
 
@@ -189,9 +190,28 @@ function debugEvaluate(expression, debugCallback) {
   return simulateRPN(expression, debugCallback);
 }
 
+var expression = `
+/* register 1 = A is pressed and has priority */
+1 recall
+0x00070004 prev_input_state_binary not /* A */
+bitwise_or /* if A was just pressed, it has priority */
+0x00070007 input_state_binary not /* D */
+bitwise_or /* if D is not pressed, A has priority */
+0x00070007 prev_input_state_binary not /* D */
+0x00070007 input_state_binary /* D */
+mul
+not
+mul /* if D was just pressed, A doesn't have priority */
+0x00070004 input_state_binary /* A */
+mul /* none of the above matters unless A is pressed */
+dup
+1 store
+/* result used as A */
+`
+
 // Example usage:
 try {
-  const expr = "2 3 add 4 mul"; // ((2 + 3) * 4) = 20
+  const expr = expression;
   const result = debugEvaluate(expr, {
     callback: (info) => {
       console.log("Debug Info:", info);
