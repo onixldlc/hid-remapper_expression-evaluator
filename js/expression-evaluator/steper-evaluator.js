@@ -26,10 +26,21 @@ function highlightTokens(tokens, start, end) {
 // Template for simulation environment variables.
 // Users can preset these values to control the behavior of random-based operators.
 const simulationEnv = {
-  input_state: undefined,            // Set to a number (0-255) to control input_state.
-  input_state_binary: undefined,     // Set to 0 or 1 to control input_state_binary.
-  prev_input_state_binary: undefined // Set to 0 or 1 to control prev_input_state_binary.
-};
+    input_state: undefined,            // Number (0-255), e.g., 128 (analog input value)
+    input_state_binary: undefined,     // 0 or 1, e.g., 1 (button pressed state)
+    prev_input_state_binary: undefined, // 0 or 1, e.g., 0 (previous button state)
+    input_state_scaled: undefined,     // Number (0-255), e.g., 200 (scaled analog input)
+    prev_input_state: undefined,       // Number (0-255), e.g., 120 (previous analog input)
+    prev_input_state_scaled: undefined, // Number (0-255), e.g., 180 (previous scaled value)
+    layer_state: undefined,            // Bitmask typically as a number (0-255), e.g., 3 (active layers)
+    sticky_state: undefined,           // Object mapping usage (string/number) to a value (0-255), e.g., { "0x00120034": 1 }
+    tap_state: undefined,              // 0 or 1, e.g., 1 (tap state active)
+    hold_state: undefined,             // 0 or 1, e.g., 0 (hold state inactive)
+    port: undefined,                   // Number representing port id, e.g., 0 (default port)
+    plugged_in: undefined,             // 0 or 1, e.g., 1 (device plugged in)
+    time: undefined,                   // Timestamp in milliseconds, e.g., Date.now() -> 1660000000000
+    time_sec: undefined                // Timestamp in seconds (with ms precision), e.g., 1660000000.123
+  };
 
 /**
  * Mapping of supported operators to their evaluation functions and operand count.
@@ -89,7 +100,7 @@ const operatorFunctions = {
     return registers.store.hasOwnProperty(reg) ? registers.store[reg] : 0;
   }},
   time: { operands: 0, fn: () => {
-    return Date.now();
+    return simulationEnv.time !== undefined ? simulationEnv.time : Date.now();
   }},
   swap: { operands: 2, fn: ([a, b]) => [b, a] },
   
@@ -117,7 +128,9 @@ const operatorFunctions = {
   clamp: { operands: 3, fn: ([x, y, z]) => x < y ? y : (x > z ? z : x) },
   bitwise_and: { operands: 2, fn: ([a, b]) => a & b },
   bitwise_not: { operands: 1, fn: ([x]) => ~x },
-  time_sec: { operands: 0, fn: () => Date.now() / 1000 },
+  time_sec: { operands: 0, fn: () => {
+    return simulationEnv.time_sec !== undefined ? simulationEnv.time_sec : Date.now() / 1000;
+  }},
   layer_state: { operands: 0, fn: () => {
     return simulationEnv.layer_state !== undefined 
       ? simulationEnv.layer_state 
@@ -319,7 +332,7 @@ dup
 
 // Example usage:
 try {
-  const expr = expression;
+  const expr = expression; // ((2 + 3) * 4) = 20
   const result = debugEvaluate(expr, {
     callback: (info) => {
       console.log("Debug Info:", info);
