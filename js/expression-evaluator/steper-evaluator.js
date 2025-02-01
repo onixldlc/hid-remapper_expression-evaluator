@@ -26,20 +26,20 @@ function highlightTokens(tokens, start, end) {
 // Template for simulation environment variables.
 // Users can preset these values to control the behavior of random-based operators.
 const simulationEnv = {
-    input_state: undefined,            // Number (0-255), e.g., 128 (analog input value)
-    input_state_binary: undefined,     // 0 or 1, e.g., 1 (button pressed state)
-    prev_input_state_binary: undefined, // 0 or 1, e.g., 0 (previous button state)
-    input_state_scaled: undefined,     // Number (0-255), e.g., 200 (scaled analog input)
-    prev_input_state: undefined,       // Number (0-255), e.g., 120 (previous analog input)
-    prev_input_state_scaled: undefined, // Number (0-255), e.g., 180 (previous scaled value)
-    layer_state: undefined,            // Bitmask typically as a number (0-255), e.g., 3 (active layers)
-    sticky_state: undefined,           // Object mapping usage (string/number) to a value (0-255), e.g., { "0x00120034": 1 }
-    tap_state: undefined,              // 0 or 1, e.g., 1 (tap state active)
-    hold_state: undefined,             // 0 or 1, e.g., 0 (hold state inactive)
-    port: undefined,                   // Number representing port id, e.g., 0 (default port)
-    plugged_in: undefined,             // 0 or 1, e.g., 1 (device plugged in)
-    time: undefined,                   // Timestamp in milliseconds, e.g., Date.now() -> 1660000000000
-    time_sec: undefined                // Timestamp in seconds (with ms precision), e.g., 1660000000.123
+    input_state: undefined,               // Number (0-255), e.g., 128 (analog input value)
+    input_state_binary: undefined,        // 0 or 1, e.g., 1 (button pressed state)
+    prev_input_state_binary: undefined,   // 0 or 1, e.g., 0 (previous button state)
+    input_state_scaled: undefined,        // Number (0-255), e.g., 200 (scaled analog input)
+    prev_input_state: undefined,          // Number (0-255), e.g., 120 (previous analog input)
+    prev_input_state_scaled: undefined,   // Number (0-255), e.g., 180 (previous scaled value)
+    layer_state: undefined,               // Bitmask typically as a number (0-255), e.g., 3 (active layers)
+    sticky_state: undefined,              // Object mapping usage (string/number) to a value (0-255), e.g., { "0x00120034": 1 }
+    tap_state: undefined,                 // 0 or 1, e.g., 1 (tap state active)
+    hold_state: undefined,                // 0 or 1, e.g., 0 (hold state inactive)
+    port: undefined,                      // Number representing port id, e.g., 0 (default port)
+    plugged_in: undefined,                // 0 or 1, e.g., 1 (device plugged in)
+    time: undefined,                      // Timestamp in milliseconds, e.g., Date.now() -> 1660000000000
+    time_sec: undefined                   // Timestamp in seconds (with ms precision), e.g., 1660000000.123
   };
 
 /**
