@@ -37,62 +37,152 @@ const simulationEnv = {
  * that receives the evaluated operand values (in order) and returns the result.
  */
 const operatorFunctions = {
-    add: { operands: 2, fn: ([a, b]) => a + b },
-    sub: { operands: 2, fn: ([a, b]) => a - b },
-    mul: { operands: 2, fn: ([a, b]) => a * b },
-    div: { operands: 2, fn: ([a, b]) => b === 0 ? 0 : a / b },
-    mod: { operands: 2, fn: ([a, b]) => {
-      if (b === 0) throw new Error("Evaluation error: modulo by zero");
-      return a % b;
-    }},
-    eq: { operands: 2, fn: ([a, b]) => a === b ? 1 : 0 },
-    gt: { operands: 2, fn: ([a, b]) => a > b ? 1 : 0 },
-    lt: { operands: 2, fn: ([a, b]) => a < b ? 1 : 0 },
-    not: { operands: 1, fn: ([a]) => a === 0 ? 1 : 0 },
-    abs: { operands: 1, fn: ([a]) => Math.abs(a) },
-    sign: { operands: 1, fn: ([a]) => a > 0 ? 1 : (a < 0 ? -1 : 0) },
-    sin: { operands: 1, fn: ([a]) => {
-      const radians = a * Math.PI / 180;
-      return Math.sin(radians);
-    }},
-    cos: { operands: 1, fn: ([a]) => {
-      const radians = a * Math.PI / 180;
-      return Math.cos(radians);
-    }},
-    round: { operands: 1, fn: ([a]) => Math.round(a) },
-    ifte: { operands: 3, fn: ([cond, thenVal, elseVal]) => cond !== 0 ? thenVal : elseVal },
-    
-    // --- Existing Operators ---
-    input_state: { operands: 1, fn: ([usage]) => {
-      return simulationEnv.input_state !== undefined 
-        ? simulationEnv.input_state 
-        : Math.floor(Math.random() * 256);
-    }},
-    input_state_binary: { operands: 1, fn: ([usage]) => {
-      return simulationEnv.input_state_binary !== undefined 
-        ? simulationEnv.input_state_binary 
-        : (Math.random() > 0.5 ? 1 : 0);
-    }},
-    // --- New Operators ---
-    prev_input_state_binary: { operands: 1, fn: ([usage]) => {
-      return simulationEnv.prev_input_state_binary !== undefined 
-        ? simulationEnv.prev_input_state_binary 
-        : (Math.random() > 0.5 ? 1 : 0);
-    }},
-    bitwise_or: { operands: 2, fn: ([a, b]) => a | b },
-    dup: { operands: 1, fn: ([a]) => [a, a] },
-    store: { operands: 2, fn: ([value, reg]) => {
-      registers.store[reg] = value;
-      return value;
-    }},
-    recall: { operands: 1, fn: ([reg]) => {
-      return registers.store.hasOwnProperty(reg) ? registers.store[reg] : 0;
-    }},
-    time: { operands: 0, fn: () => {
-      return Date.now();
-    }},
-    swap: { operands: 2, fn: ([a, b]) => [b, a] }
-  };
+  add: { operands: 2, fn: ([a, b]) => a + b },
+  sub: { operands: 2, fn: ([a, b]) => a - b },
+  mul: { operands: 2, fn: ([a, b]) => a * b },
+  div: { operands: 2, fn: ([a, b]) => b === 0 ? 0 : a / b },
+  mod: { operands: 2, fn: ([a, b]) => {
+    if (b === 0) throw new Error("Evaluation error: modulo by zero");
+    return a % b;
+  }},
+  eq: { operands: 2, fn: ([a, b]) => a === b ? 1 : 0 },
+  gt: { operands: 2, fn: ([a, b]) => a > b ? 1 : 0 },
+  lt: { operands: 2, fn: ([a, b]) => a < b ? 1 : 0 },
+  not: { operands: 1, fn: ([a]) => a === 0 ? 1 : 0 },
+  abs: { operands: 1, fn: ([a]) => Math.abs(a) },
+  sign: { operands: 1, fn: ([a]) => a > 0 ? 1 : (a < 0 ? -1 : 0) },
+  sin: { operands: 1, fn: ([a]) => {
+    const radians = a * Math.PI / 180;
+    return Math.sin(radians);
+  }},
+  cos: { operands: 1, fn: ([a]) => {
+    const radians = a * Math.PI / 180;
+    return Math.cos(radians);
+  }},
+  round: { operands: 1, fn: ([a]) => Math.round(a) },
+  ifte: { operands: 3, fn: ([cond, thenVal, elseVal]) => cond !== 0 ? thenVal : elseVal },
+  
+  // --- Existing Operators ---
+  input_state: { operands: 1, fn: ([usage]) => {
+    return simulationEnv.input_state !== undefined 
+      ? simulationEnv.input_state 
+      : Math.floor(Math.random() * 256);
+  }},
+  input_state_binary: { operands: 1, fn: ([usage]) => {
+    return simulationEnv.input_state_binary !== undefined 
+      ? simulationEnv.input_state_binary 
+      : (Math.random() > 0.5 ? 1 : 0);
+  }},
+  // --- New Operators (already implemented) ---
+  prev_input_state_binary: { operands: 1, fn: ([usage]) => {
+    return simulationEnv.prev_input_state_binary !== undefined 
+      ? simulationEnv.prev_input_state_binary 
+      : (Math.random() > 0.5 ? 1 : 0);
+  }},
+  bitwise_or: { operands: 2, fn: ([a, b]) => a | b },
+  dup: { operands: 1, fn: ([a]) => [a, a] },
+  store: { operands: 2, fn: ([value, reg]) => {
+    registers.store[reg] = value;
+    return value;
+  }},
+  recall: { operands: 1, fn: ([reg]) => {
+    return registers.store.hasOwnProperty(reg) ? registers.store[reg] : 0;
+  }},
+  time: { operands: 0, fn: () => {
+    return Date.now();
+  }},
+  swap: { operands: 2, fn: ([a, b]) => [b, a] },
+  
+  // --- Additional Operators ---
+  input_state_scaled: { operands: 1, fn: ([usage]) => {
+    return simulationEnv.input_state_scaled !== undefined 
+      ? simulationEnv.input_state_scaled 
+      : Math.floor(Math.random() * 256);
+  }},
+  prev_input_state: { operands: 1, fn: ([usage]) => {
+    return simulationEnv.prev_input_state !== undefined 
+      ? simulationEnv.prev_input_state 
+      : Math.floor(Math.random() * 256);
+  }},
+  prev_input_state_scaled: { operands: 1, fn: ([usage]) => {
+    return simulationEnv.prev_input_state_scaled !== undefined 
+      ? simulationEnv.prev_input_state_scaled 
+      : Math.floor(Math.random() * 256);
+  }},
+  min: { operands: 2, fn: ([a, b]) => Math.min(a, b) },
+  max: { operands: 2, fn: ([a, b]) => Math.max(a, b) },
+  atan2: { operands: 2, fn: ([x, y]) => Math.atan2(x, y) },
+  sqrt: { operands: 1, fn: ([x]) => Math.sqrt(x) },
+  relu: { operands: 1, fn: ([x]) => x < 0 ? 0 : x },
+  clamp: { operands: 3, fn: ([x, y, z]) => x < y ? y : (x > z ? z : x) },
+  bitwise_and: { operands: 2, fn: ([a, b]) => a & b },
+  bitwise_not: { operands: 1, fn: ([x]) => ~x },
+  time_sec: { operands: 0, fn: () => Date.now() / 1000 },
+  layer_state: { operands: 0, fn: () => {
+    return simulationEnv.layer_state !== undefined 
+      ? simulationEnv.layer_state 
+      : Math.floor(Math.random() * 256);
+  }},
+  sticky_state: { operands: 1, fn: ([usage]) => {
+    if (simulationEnv.sticky_state && simulationEnv.sticky_state.hasOwnProperty(usage)) {
+      return simulationEnv.sticky_state[usage];
+    }
+    return Math.floor(Math.random() * 256);
+  }},
+  tap_state: { operands: 1, fn: ([usage]) => {
+    return simulationEnv.tap_state !== undefined 
+      ? simulationEnv.tap_state 
+      : (Math.random() > 0.5 ? 1 : 0);
+  }},
+  hold_state: { operands: 1, fn: ([usage]) => {
+    return simulationEnv.hold_state !== undefined 
+      ? simulationEnv.hold_state 
+      : (Math.random() > 0.5 ? 1 : 0);
+  }},
+  port: { operands: 1, fn: ([port]) => {
+    simulationEnv.port = port;
+    return port;
+  }},
+  plugged_in: { operands: 0, fn: () => {
+    if (simulationEnv.plugged_in !== undefined) return simulationEnv.plugged_in;
+    return simulationEnv.port === 0 ? 1 : 0;
+  }},
+  deadzone: { operands: 3, fn: ([x, y, deadzone]) => {
+    let magnitude = Math.sqrt(x * x + y * y);
+    if (magnitude < deadzone) {
+      return ["0", "0"];
+    }
+    return [x.toString(), y.toString()];
+  }},
+  deadzone2: { operands: 4, fn: ([x, y, inner, outer]) => {
+    let magnitude = Math.sqrt(x * x + y * y);
+    if (magnitude < inner) {
+      return ["0", "0"];
+    } else if (magnitude > outer) {
+      let scale = outer / magnitude;
+      return [(x * scale).toString(), (y * scale).toString()];
+    }
+    return [x.toString(), y.toString()];
+  }},
+  dpad: { operands: 4, fn: ([left, right, up, down]) => {
+    left = Number(left) ? 1 : 0;
+    right = Number(right) ? 1 : 0;
+    up = Number(up) ? 1 : 0;
+    down = Number(down) ? 1 : 0;
+    if (up && !right && !down && !left) return 1;
+    if (right && !up && !down && !left) return 3;
+    if (down && !left && !right && !up) return 5;
+    if (left && !up && !down && !right) return 7;
+    if (up && right) return 2;
+    if (right && down) return 4;
+    if (down && left) return 6;
+    if (left && up) return 8;
+    return 0;
+  }},
+  monitor: { operands: 2, fn: ([x, usage]) => {
+    return x;
+  }}
+};
 
 /**
  * Simulates RPN evaluation step-by-step and calls debug callbacks.
@@ -229,7 +319,7 @@ dup
 
 // Example usage:
 try {
-  const expr = expression; // ((2 + 3) * 4) = 20
+  const expr = expression;
   const result = debugEvaluate(expr, {
     callback: (info) => {
       console.log("Debug Info:", info);
