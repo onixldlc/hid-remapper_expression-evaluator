@@ -11,6 +11,14 @@ const registers = {};
 
 /**
  * Add missing highlightTokens function.
+ *
+ * Highlights tokens by surrounding them with brackets between
+ * the specified start and end indices.
+ *
+ * @param {string[]} tokens - Array of tokens to highlight.
+ * @param {number} start - The start index for highlighting.
+ * @param {number} end - The end index for highlighting.
+ * @returns {string} - The tokens combined into a string with highlights.
  */
 function highlightTokens(tokens, start, end) {
   if (start === end) {
@@ -271,13 +279,19 @@ function simulateRPN(expression, debugCallback) {
 
 /**
  * Replaces the old debugEvaluate with one that uses simulateRPN.
+ *
+ * This function takes an expression and a debug callback function,
+ * then evaluates the expression using the simulateRPN function,
+ * providing step-by-step updates via the debug callback.
+ *
+ * @param {string} expression - The expression to evaluate.
+ * @param {Function} debugCallback - A callback function that receives debug information during evaluation.
+ * @returns {*} The result returned by simulateRPN after evaluating the expression.
  */
 function debugEvaluate(expression, debugCallback) {
   return simulateRPN(expression, debugCallback);
 }
 
-
-// usage:
 
 var expression = `
 /* register 1 = A is pressed and has priority */
@@ -302,7 +316,6 @@ try {
   const result = debugEvaluate(expr, {
     callback: (info) => {
       debugStack.push(info)
-      // console.log("Debug Info:", info);
     }
   });
   console.log("Final Result:", result);
