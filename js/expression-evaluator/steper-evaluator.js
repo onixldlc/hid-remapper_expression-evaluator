@@ -292,6 +292,9 @@ function debugEvaluate(expression, debugCallback) {
   return simulateRPN(expression, debugCallback);
 }
 
+function clearDebugStack() {
+  debugStack.length = 0;
+}
 
 var expression = `
 /* register 1 = A is pressed and has priority */
