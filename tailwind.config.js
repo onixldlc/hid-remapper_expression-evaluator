@@ -1,0 +1,1 @@
+// only to make tailwind extension for vscode happy
