@@ -92,13 +92,15 @@ const operatorFunctions = {
   }},
   bitwise_or: { operands: 2, fn: ([a, b]) => a | b },
   dup: { operands: 1, fn: ([a]) => [a, a] },
-  store: { operands: 2, fn: ([value, reg]) => {
-    registers.store[reg] = value;
-    return value;
+  store: { operands: 2, fn: ([x, reg]) => {
+    if (reg >= 1 && reg <= 32) {
+      registers[reg] = x;
+    }
+    return [];
   }},
-  recall: { operands: 1, fn: ([reg]) => {
-    return registers.store.hasOwnProperty(reg) ? registers.store[reg] : 0;
-  }},
+  recall: { operands: 1, fn: ([reg]) => 
+    reg >= 1 && reg <= 32 && registers[reg] !== undefined ? registers[reg] : 0 
+  },
   time: { operands: 0, fn: () => {
     return simulationEnv.time !== undefined ? simulationEnv.time : Date.now();
   }},
