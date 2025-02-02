@@ -279,35 +279,38 @@ function clearDebugStack() {
   debugStack.length = 0;
 }
 
-var expression = `
-/* register 1 = A is pressed and has priority */
-1 recall
-0x00070004 prev_input_state_binary not /* A */
-bitwise_or /* if A was just pressed, it has priority */
-0x00070007 input_state_binary not /* D */
-bitwise_or /* if D is not pressed, A has priority */
-0x00070007 prev_input_state_binary not /* D */
-0x00070007 input_state_binary /* D */
-mul
-not
-mul /* if D was just pressed, A doesn't have priority */
-0x00070004 input_state_binary /* A */
-mul /* none of the above matters unless A is pressed */
-dup
-1 store
-/* result used as A */
-`
+function main(){
+  var expression = `
+  /* register 1 = A is pressed and has priority */
+  1 recall
+  0x00070004 prev_input_state_binary not /* A */
+  bitwise_or /* if A was just pressed, it has priority */
+  0x00070007 input_state_binary not /* D */
+  bitwise_or /* if D is not pressed, A has priority */
+  0x00070007 prev_input_state_binary not /* D */
+  0x00070007 input_state_binary /* D */
+  mul
+  not
+  mul /* if D was just pressed, A doesn't have priority */
+  0x00070004 input_state_binary /* A */
+  mul /* none of the above matters unless A is pressed */
+  dup
+  1 store
+  /* result used as A */
+  `
 
-try {
-  window.hexeses = processHexadecimals(expression);
-  const expr = expression;
-  const result = debugEvaluate(expr, {
-    callback: (info) => {
-      debugStack.push(info)
-      console.log("Debug Info:", info);
-    }
-  });
-  console.log("Final Result:", result);
-} catch (e) {
-  console.error(e.message);
+  try {
+    // window.hexeses = processHexadecimals(expression);
+    const expr = expression;
+    const result = debugEvaluate(expr, {
+      callback: (info) => {
+        debugStack.push(info)
+        console.log("Debug Info:", info);
+      }
+    });
+    console.log("Final Result:", result);
+  } catch (e) {
+    console.error(e.message);
+  }
 }
+
