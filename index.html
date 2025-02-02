@@ -29,13 +29,29 @@
                     <div class="flex flex-row">
                         <textarea id="expression_input" class="w-full h-[300px] bg-gray-800 text-white p-2 rounded-lg border-slate-700 border-2 shadow-md" placeholder="Enter your HID remapper expression here..."></textarea>
                     </div>
+                    <div class="flex flex-row justify-end">
+                        <input type="button" value="Debug" class="
+                        p-2 rounded-lg border-2 shadow-md mt-2 cursor-pointer 
+                        
+                        bg-[#3062d6] 
+                        border-[#3062d6]  
+                        text-white 
+                        
+                        hover:bg-[#233358] 
+                        hover:border-[#233358] 
+                        hover:text-gray-200
+                        
+                        active:bg-[#0f172a] 
+                        active:border-[#0f172a]
+                        active:text-gray-500 " onclick="start_evaluator()">
+                    </div>
                 </div>
-                
                 <div id="to_hide" hidden>
                     <div id="configs" class="h-fit flex flex-wrap bg-gray-800 justify-start p-1.5 rounded-xl shadow-md">
                         <div id="template" class="w-1/2 p-1.5" hidden>
                             <div class="border-slate-600 border-2 rounded-lg p-2">
                                 <div class="text-lg pb-2">0x000000001 - Configuration</div>
+                                <div class="h-[2px] w-full mx-auto mb-1 bg-slate-400"></div>
                                 <div class="flex flex-row ">
                                     <div class="flex flex-row gap-2 pr-2">
                                         <div class="flex flex-col gap-2">
@@ -91,7 +107,6 @@
                         </div>
                     </div>
                 </div>
-                
             </div>
         </div>
 
@@ -119,6 +134,32 @@
     <script>
         let expression = "";
         let expresion_input_element = document.getElementById('expression_input');
+
+        function start_evaluator(){
+            console.log('starting to evaluate...');
+
+            try {
+                // window.hexeses = processHexadecimals(expression);
+                const expr = expression;
+
+                if(expression === "") {
+                    throw new Error("Expression is empty");
+                }
+
+                const result = debugEvaluate(expr, {
+                callback: (info) => {
+                    debugStack.push(info)
+                    console.log("Debug Info:", info);
+                }
+                });
+                console.log("Final Result:", result);
+            } catch (e) {
+                console.error(e.message);
+            }
+            // let expression = expresion_input_element.value;
+            // let hexeses = processHexadecimals(expression);
+            // console.log(hexeses);
+        }
 
         expresion_input_element.addEventListener('cut', () => {
             setTimeout(() => {
