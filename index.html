@@ -155,6 +155,17 @@
                         clone.classList.add("configurations")
                         clone.hidden = false;
                         clone.innerHTML = clone.innerHTML.replace(/0x000000001/g, hex);
+                        clone.querySelectorAll('input').forEach(input => {
+                            input.addEventListener('input', () => {
+                                const propName = input.name.replace(hex + '_', '');
+                                if (input.type === 'checkbox') {
+                                    window.hexeses[hex][propName] = input.checked;
+                                } else {
+                                    window.hexeses[hex][propName] = input.value;
+                                }
+                                console.log(`Updated ${hex}[${propName}] to`, window.hexeses[hex][propName]);
+                            });
+                        });
                         document.getElementById('configs').appendChild(clone);
                     }
                 }else{
