@@ -34,23 +34,6 @@ function highlightTokens(tokens, start, end) {
 // Template for simulation environment variables.
 // Users can preset these values to control the behavior of random-based operators.
 const simulationEnv = {
-  // Analog Input Values:
-  input_state: undefined,            // Number (0-255), e.g., 128 (analog input value)
-  input_state_scaled: undefined,     // Number (0-255), e.g., 200 (scaled analog input)
-  prev_input_state: undefined,       // Number (0-255), e.g., 120 (previous analog input)
-  prev_input_state_scaled: undefined, // Number (0-255), e.g., 180 (previous scaled value)
-
-  // Binary States:
-  input_state_binary: undefined,     // 0 or 1, e.g., 1 (button pressed state)
-  prev_input_state_binary: undefined, // 0 or 1, e.g., 0 (previous button state)
-  tap_state: undefined,              // 0 or 1, e.g., 1 (tap state active)
-  hold_state: undefined,             // 0 or 1, e.g., 0 (hold state inactive)
-  plugged_in: undefined,             // 0 or 1, e.g., 1 (device plugged in)
-
-  // Layer and Sticky State:
-  layer_state: undefined,            // Bitmask typically as a number (0-255), e.g., 3 (active layers)
-  sticky_state: undefined,           // Object mapping usage (string/number) to a value (0-255), e.g., { "0x00120034": 1 }
-
   // Port:
   port: undefined,                   // Number representing port id, e.g., 0 (default port)
 
@@ -109,15 +92,15 @@ const operatorFunctions = {
   plugged_in: { operands: 0, fn: () => { if (simulationEnv.plugged_in !== undefined) return simulationEnv.plugged_in; return simulationEnv.port === 0 ? 1 : 0; }},
 
   // 1 operand:
-  input_state: { operands: 1, fn: ([usage]) => simulationEnv.input_state && simulationEnv.input_state.hasOwnProperty(usage) ? simulationEnv.input_state[usage] : Math.floor(Math.random() * 256) },
-  input_state_binary: { operands: 1, fn: ([usage]) => simulationEnv.input_state_binary && simulationEnv.input_state_binary.hasOwnProperty(usage) ? simulationEnv.input_state_binary[usage] : (Math.random() > 0.5 ? 1 : 0) },
-  prev_input_state_binary: { operands: 1, fn: ([usage]) => simulationEnv.prev_input_state_binary && simulationEnv.prev_input_state_binary.hasOwnProperty(usage) ? simulationEnv.prev_input_state_binary[usage] : (Math.random() > 0.5 ? 1 : 0) },
-  input_state_scaled: { operands: 1, fn: ([usage]) => simulationEnv.input_state_scaled && simulationEnv.input_state_scaled.hasOwnProperty(usage) ? simulationEnv.input_state_scaled[usage] : Math.floor(Math.random() * 256) },
-  prev_input_state: { operands: 1, fn: ([usage]) => simulationEnv.prev_input_state && simulationEnv.prev_input_state.hasOwnProperty(usage) ? simulationEnv.prev_input_state[usage] : Math.floor(Math.random() * 256) },
-  prev_input_state_scaled: { operands: 1, fn: ([usage]) => simulationEnv.prev_input_state_scaled && simulationEnv.prev_input_state_scaled.hasOwnProperty(usage) ? simulationEnv.prev_input_state_scaled[usage] : Math.floor(Math.random() * 256) },
-  sticky_state: { operands: 1, fn: ([usage]) => simulationEnv.sticky_state && simulationEnv.sticky_state.hasOwnProperty(usage) ? simulationEnv.sticky_state[usage] : Math.floor(Math.random() * 256) },
-  tap_state: { operands: 1, fn: ([usage]) => simulationEnv.tap_state && simulationEnv.tap_state.hasOwnProperty(usage) ? simulationEnv.tap_state[usage] : (Math.random() > 0.5 ? 1 : 0) },
-  hold_state: { operands: 1, fn: ([usage]) => simulationEnv.hold_state && simulationEnv.hold_state.hasOwnProperty(usage) ? simulationEnv.hold_state[usage] : (Math.random() > 0.5 ? 1 : 0) },
+  input_state: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('input_state') ? window.hexeses[usage].input_state : Math.floor(Math.random() * 256) },
+  input_state_binary: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('input_state_binary') ? window.hexeses[usage].input_state_binary : (Math.random() > 0.5 ? 1 : 0) },
+  prev_input_state_binary: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('prev_input_state_binary') ? window.hexeses[usage].prev_input_state_binary : (Math.random() > 0.5 ? 1 : 0) },
+  input_state_scaled: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('input_state_scaled') ? window.hexeses[usage].input_state_scaled : Math.floor(Math.random() * 256) },
+  prev_input_state: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('prev_input_state') ? window.hexeses[usage].prev_input_state : Math.floor(Math.random() * 256) },
+  prev_input_state_scaled: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('prev_input_state_scaled') ? window.hexeses[usage].prev_input_state_scaled : Math.floor(Math.random() * 256) },
+  sticky_state: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('sticky_state') ? window.hexeses[usage].sticky_state : Math.floor(Math.random() * 256) },
+  tap_state: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('tap_state') ? window.hexeses[usage].tap_state : (Math.random() > 0.5 ? 1 : 0) },
+  hold_state: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('hold_state') ? window.hexeses[usage].hold_state : (Math.random() > 0.5 ? 1 : 0) },
   dup: { operands: 1, fn: ([a]) => [a, a] },
   recall: { operands: 1, fn: ([reg]) => reg >= 1 && reg <= 32 && registers[reg] !== undefined ? registers[reg] : 0 },
   port: { operands: 1, fn: ([port]) => { simulationEnv.port = port; return port; } },
@@ -314,11 +297,14 @@ dup
 1 store
 /* result used as A */
 `
+
 try {
+  window.hexeses = processHexadecimals(expression);
   const expr = expression;
   const result = debugEvaluate(expr, {
     callback: (info) => {
       debugStack.push(info)
+      console.log("Debug Info:", info);
     }
   });
   console.log("Final Result:", result);
