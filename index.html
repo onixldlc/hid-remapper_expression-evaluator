@@ -48,10 +48,10 @@
                 </div>
                 <div id="to_hide" hidden>
                     <div id="configs" class="h-fit flex flex-wrap bg-gray-800 justify-start p-1.5 rounded-xl shadow-md">
-                        <div id="template" class="w-1/2 p-1.5" hidden>
+                        <div id="configuration_template" class="w-1/2 p-1.5" hidden>
                             <div class="border-slate-600 border-2 rounded-lg p-2">
                                 <div class="text-lg pb-2">0x000000001 - Configuration</div>
-                                <div class="h-[2px] w-full mx-auto mb-1 bg-slate-400"></div>
+                                <div class="h-[2px] w-full mx-auto mb-1 bg-slate-700"></div>
                                 <div class="flex flex-row ">
                                     <div class="flex flex-row gap-2 pr-2">
                                         <div class="flex flex-col gap-2">
@@ -76,7 +76,7 @@
                                         </div>
                                     </div>
                 
-                                    <div class="h-[150px] w-[2px] my-auto mx-2 bg-slate-400"></div>
+                                    <div class="h-[150px] w-[2px] my-auto mx-2 bg-slate-700"></div>
                 
                                     <div class="flex flex-row gap-2 pl-2">
                                         <div class="flex flex-col justify-between">
@@ -112,8 +112,26 @@
 
         <!-- Right Section (Explanation and Match Information) -->
         <div class="w-1/4">
-            <div class="h-full bg-gray-800 p-4">
-                <div class="text-lg font-semibold mb-4">Explanation</div>
+            <div class="h-full bg-gray-800 p-2">
+                <div>
+
+                    <div class="text-lg font-semibold ml-2 mt-2 mb-4">Registers</div>
+                    <div class="h-[2px] w-full mx-auto mb-1 bg-slate-700"></div>
+
+                    <div class="flex flex-1 flex-wrap">
+                        <div id="register_template" class="p-2 w-1/4" hidden>
+                            <div class="flex flex-row bg-gray-800 text-white p-2 rounded-lg border-slate-700 border-2 shadow-md ">
+                                <label for="REGISTERID">REGISTERID:</label>
+                                <input name="REGISTERID" type="text" class="text-end w-full bg-gray-800 text-white" placeholder="REGISTERID">
+                            </div>
+                        </div>
+                        
+                        
+
+                    </div>
+
+                </div>
+                <!-- <div class="text-lg font-semibold mb-4">Explanation</div>
                 <div class="text-sm mb-4">
                     <span class="text-red-500">/a/ gm</span> <br>
                     a matches the character 'a' with index 97 (61 or 141) literally (case sensitive) <br><br>
@@ -122,11 +140,11 @@
                     <strong>m</strong> modifier: multi-line. Causes <span class="text-red-500">^</span> and <span class="text-red-500">$</span> to match the begin/end of each line (not only begin/end of string)
                 </div>
     
-                <div class="text-lg font-semibold mb-4">Match Information</div>
+                <div class="text-lg font-semibold mb-4">Evaluation Information</div>
                 <div class="text-sm">
                     Your HID remapper expression does not match the subject string.<br>
                     Try launching the debugger to find out why.
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -189,6 +207,50 @@
     </script>
 
     <script>
+        function init_register() {
+            const template = document.getElementById("register_template");
+            const container = template.parentElement;
+            
+            // Store input references
+            window.registerElements = {};
+            
+            for (let i = 1; i <= 32; i++) {
+                const newRegister = template.cloneNode(true);
+                newRegister.hidden = false;
+                
+                const label = newRegister.querySelector("label");
+                const input = newRegister.querySelector("input");
+                
+                label.textContent = `R${i}:`;
+                input.name = `R${i}`;
+                input.placeholder = `R${i}`;
+                
+                // Store reference and set initial value
+                window.registerElements[i] = input;
+                input.value = registers[i] || 0;
+
+                // Watch for user input
+                input.addEventListener("input", function(e) {
+                    registers[i] = parseInt(e.target.value) || 0;
+                });
+
+                // Watch for programmatic changes to registers
+                const originalStore = operatorFunctions.store.fn;
+                operatorFunctions.store.fn = ([x, reg]) => {
+                    const result = originalStore([x, reg]);
+                    if (window.registerElements[reg]) {
+                        window.registerElements[reg].value = x;
+                    }
+                    return result;
+                };
+
+                container.appendChild(newRegister);
+            }
+        }
+        init_register()
+    </script>
+
+    <script>
         let expression = "";
         let expresion_input_element = document.getElementById('expression_input');
 
@@ -247,7 +309,7 @@
                     document.getElementById('to_hide').hidden = false;
                     for (const hex in window.hexeses) {
                         let config = window.hexeses[hex];
-                        let template = document.getElementById('template');
+                        let template = document.getElementById('configuration_template');
                         let clone = template.cloneNode(true);
                         clone.removeAttribute("id");
                         clone.classList.add("configurations")
