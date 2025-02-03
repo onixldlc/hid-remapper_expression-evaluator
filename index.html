@@ -32,6 +32,43 @@
                         <textarea id="expression_input" class="w-full h-[300px] bg-gray-800 text-white p-2 rounded-lg border-slate-700 border-2 shadow-md" placeholder="Enter your HID remapper expression here..."></textarea>
                     </div>
                     <div class="flex flex-row w-full mt-2">
+                        <div class = "w-full flex flex-row items-center justify-start">
+                            <div class="flex flex-row items-center">
+                                <label class="inline-flex flex-1 items-center cursor-pointer">
+                                    <input type="checkbox" id="show_literal_operations" class="sr-only peer">
+                                        <div class="
+                                        
+                                        relative peer-focus:outline-none  rounded-full  after:content-[''] after:border  after:rounded-full   
+
+                                        w-[32px]
+                                        h-[16px]
+                                        after:h-[12px]
+                                        after:w-[12px]
+                                        after:top-[2px] 
+                                        after:start-[2px] 
+
+                                        bg-slate-700 
+
+                                        peer-focus:ring-blue-800 
+                                        peer-checked:bg-blue-600
+                                        peer-checked:after:border-white 
+
+                                        after:bg-gray-400 
+                                        after:border-slate-600 
+                                        
+                                        after:absolute
+                                        after:transition-all
+                                        peer
+                                        peer-checked:after:translate-x-[calc(32px-calc(100%+4px))]
+                                        rtl:peer-checked:after:-translate-x-[calc(32px-calc(100%+4px))]
+                                        pointer-events-auto
+
+                                    "></div>
+                                    <span class="ms-3 text-slate-500 text-sm flex items-center">include literals</span>
+
+                                </label>
+                            </div>
+                        </div>
                         <div class="w-full flex flex-row items-center justify-end ">
                             <input type="button" value="Eval" class="
                             p-1 w-16 rounded-lg border-2 shadow-md cursor-pointer 
@@ -264,6 +301,7 @@
             // Get the template
             const template = document.getElementById('evaluation_template');
             const container = document.getElementById('evaluation_list');
+            let independed_index=1;
             
             // Clear existing evaluations
             container.querySelectorAll('.evaluation_entry').forEach((entry) => entry.remove());
@@ -278,15 +316,20 @@
             // Create elements for each debug step
             debugStack.forEach((info, index) => {
                 // Clone template
+                let humanIndex
                 const evaluation = template.cloneNode(true);
-                const humanIndex = index + 1;
-                
+                const showLiterals = document.getElementById('show_literal_operations').checked;
+
+                // Use independent index for non-literal operations, or normal index for all operations if showLiterals is true
+
                 // Check if we should skip literal operations
-                // const showLiterals = document.getElementById('show_literal_operations').checked;
-                // if (!showLiterals && info.operation === 'literal') {
-                //     return; // Skip this evaluation step
-                // }
+                if (!showLiterals && info.operation === 'literal') {
+                    return; // Skip this evaluation step
+                }
                 
+                humanIndex = showLiterals ? index + 1 : independed_index;
+                independed_index++;
+
                 // Set unique ID and remove template ID
                 evaluation.id = `evaluation_${humanIndex}`;
 
