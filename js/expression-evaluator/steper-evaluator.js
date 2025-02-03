@@ -185,9 +185,9 @@ function simulateRPN(expression, debugCallback) {
         plainEvaluation: exactEvaluation,
         startPos: highlightStart,
         endPos: highlightEnd,
-        x: extra.operands?.[0]?.value || null,
-        y: extra.operands?.[1]?.value || null,
-        z: extra.operands?.[2]?.value || null,
+        x: extra.operands?.[0]?.value,
+        y: extra.operands?.[1]?.value,
+        z: extra.operands?.[2]?.value,
         operation: "literal",
         stack: [],
         registers,
@@ -236,7 +236,7 @@ function simulateRPN(expression, debugCallback) {
         for (let k = 0; k < insertedTokens.length; k++) {
           stack.push({ value: insertedTokens[k], pos: spanStart + k });
         }
-        updateDebug(spanStart, spanEnd + insertedTokens.length - 1, { 
+        updateDebug(spanStart, spanEnd, { 
           operands,  // This gives us x,y,z from original values
           result: insertedTokens.join(" "),  // Array results go to result field
           operation: token
