@@ -12,6 +12,9 @@
     <script src="//unpkg.com/alpinejs" defer></script>
 
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="/css/toggle-switch.css">
+
 </head>
 <body class="min-h-screen flex flex-col bg-gray-900 text-white">
     <div class="flex flex-col items-center bg-gray-900 text-white w-full flex-1">
@@ -36,36 +39,8 @@
                             <div class="flex flex-row items-center">
                                 <label class="inline-flex flex-1 items-center cursor-pointer">
                                     <input type="checkbox" id="show_literal_operations" class="sr-only peer">
-                                    <div class="
-                                        
-                                        relative peer-focus:outline-none  rounded-full  after:content-[''] after:border  after:rounded-full   
-
-                                        w-[32px]
-                                        h-[16px]
-                                        after:h-[12px]
-                                        after:w-[12px]
-                                        after:top-[2px] 
-                                        after:start-[2px] 
-
-                                        bg-slate-700 
-
-                                        peer-focus:ring-blue-800 
-                                        peer-checked:bg-blue-600
-                                        peer-checked:after:border-white 
-
-                                        after:bg-gray-400 
-                                        after:border-slate-600 
-                                        
-                                        after:absolute
-                                        after:transition-all
-                                        peer
-                                        peer-checked:after:translate-x-[calc(32px-calc(100%+4px))]
-                                        rtl:peer-checked:after:-translate-x-[calc(32px-calc(100%+4px))]
-                                        pointer-events-auto
-
-                                    "></div>
+                                    <div class="toggle-switch"></div>
                                     <span class="ms-3 text-slate-500 text-sm flex items-center">include literals</span>
-
                                 </label>
                             </div>
                         </div>
@@ -98,48 +73,63 @@
                                         <div class="flex flex-col gap-2">
                                             <div class="flex flex-col gap-2">
                                                 <label for="0x000000001_input_state">input state</label>
-                                                <input name="0x000000001_input_state" type="text" class="bg-gray-800 text-white p-2 rounded-lg border-slate-700 border-2 shadow-md w-[150px]" placeholder="(0-255)">
+                                                <input id="0x000000001_input_state" type="text" class="bg-gray-800 text-white p-2 rounded-lg border-slate-700 border-2 shadow-md w-[150px]" placeholder="(0-255)">
                                             </div>
                                             <div class="flex flex-col gap-2">
                                                 <label for="0x000000001_input_state_scaled">input state scaled</label>
-                                                <input name="0x000000001_input_state_scaled" type="text" class="bg-gray-800 text-white p-2 rounded-lg border-slate-700 border-2 shadow-md w-[150px]" placeholder="(0-255)">
+                                                <input id="0x000000001_input_state_scaled" type="text" class="bg-gray-800 text-white p-2 rounded-lg border-slate-700 border-2 shadow-md w-[150px]" placeholder="(0-255)">
                                             </div>
                                         </div>
                                         <div class="flex flex-col gap-2">
                                             <div class="flex flex-col gap-2">
                                                 <label for="0x000000001_prev_input_state">prev input state</label>
-                                                <input name="0x000000001_prev_input_state" type="text" class="bg-gray-800 text-white p-2 rounded-lg border-slate-700 border-2 shadow-md w-[150px]" placeholder="(0-255)">
+                                                <input id="0x000000001_prev_input_state" type="text" class="bg-gray-800 text-white p-2 rounded-lg border-slate-700 border-2 shadow-md w-[150px]" placeholder="(0-255)">
                                             </div>
                                             <div class="flex flex-col gap-2">
                                                 <label for="0x000000001_prev_input_state_scaled">prev input state scaled</label>
-                                                <input name="0x000000001_prev_input_state_scaled" type="text" class="bg-gray-800 text-white p-2 rounded-lg border-slate-700 border-2 shadow-md w-[150px]" placeholder="(0-255)">
+                                                <input id="0x000000001_prev_input_state_scaled" type="text" class="bg-gray-800 text-white p-2 rounded-lg border-slate-700 border-2 shadow-md w-[150px]" placeholder="(0-255)">
                                             </div>
                                         </div>
                                     </div>
                 
                                     <div class="h-[150px] w-[2px] my-auto mx-2 bg-slate-700"></div>
                 
-                                    <div class="flex flex-row gap-2 pl-2">
+                                    <div class="flex flex-row gap-2 pl-2 py-1">
                                         <div class="flex flex-col justify-between">
-                                            <div class="flex flex-row justify-start gap-2">
-                                                <input class="bg-gray-800 text-white p-2 rounded-lg border-slate-700 border-2 shadow-md"  type="checkbox" name="0x000000001_input_state_binary" >
-                                                <label for="0x000000001_input_state_binary">input state</label>
+                                            <div class="flex flex-row">
+                                                <label class="flex flex-row justify-start items-center gap-2" for="0x000000001_input_state_binary">
+                                                    <input class="sr-only peer" type="checkbox" id="0x000000001_input_state_binary">
+                                                    <div class="toggle-switch"></div>
+                                                    <span class="text-slate-500 text-sm flex items-center">input state</span>
+                                                </label>
                                             </div>
-                                            <div class="flex flex-row justify-start gap-2">
-                                                <input class="bg-gray-800 text-white p-2 rounded-lg border-slate-700 border-2 shadow-md"  type="checkbox" name="0x000000001_prev_input_state_binary" >
-                                                <label for="0x000000001_prev_input_state_binary">prev input state binary</label>
+                                            <div class="flex flex-row">
+                                                <label class="flex flex-row justify-start items-center gap-2" for="0x000000001_prev_input_state_binary">
+                                                    <input class="sr-only peer" type="checkbox" id="0x000000001_prev_input_state_binary">
+                                                    <div class="toggle-switch"></div>
+                                                    <span class="text-slate-500 text-sm flex items-center">prev input state binary</span>
+                                                </label>
                                             </div>
-                                            <div class="flex flex-row justify-start gap-2">
-                                                <input class="bg-gray-800 text-white p-2 rounded-lg border-slate-700 border-2 shadow-md"  type="checkbox" name="0x000000001_tap_state" >
-                                                <label for="0x000000001_tap_state">tap_state</label>
+                                            <div class="flex flex-row">
+                                                <label class="flex flex-row justify-start items-center gap-2" for="0x000000001_tap_state">
+                                                    <input class="sr-only peer" type="checkbox" id="0x000000001_tap_state">
+                                                    <div class="toggle-switch"></div>
+                                                    <span class="text-slate-500 text-sm flex items-center">tap_state</span>
+                                                </label>
                                             </div>
-                                            <div class="flex flex-row justify-start gap-2">
-                                                <input class="bg-gray-800 text-white p-2 rounded-lg border-slate-700 border-2 shadow-md"  type="checkbox" name="0x000000001_hold_state" >
-                                                <label for="0x000000001_hold_state">hold_state</label>
+                                            <div class="flex flex-row">
+                                                <label class="flex flex-row justify-start items-center gap-2" for="0x000000001_hold_state">
+                                                    <input class="sr-only peer" type="checkbox" id="0x000000001_hold_state">
+                                                    <div class="toggle-switch"></div>
+                                                    <span class="text-slate-500 text-sm flex items-center">hold_state</span>
+                                                </label>
                                             </div>
-                                            <div class="flex flex-row justify-start gap-2">
-                                                <input class="bg-gray-800 text-white p-2 rounded-lg border-slate-700 border-2 shadow-md"  type="checkbox" name="0x000000001_plugged_in" >
-                                                <label for="0x000000001_plugged_in">plugged_in</label>
+                                            <div class="flex flex-row">
+                                                <label class="flex flex-row justify-start items-center gap-2" for="0x000000001_plugged_in">
+                                                    <input class="sr-only peer" type="checkbox" id="0x000000001_plugged_in">
+                                                    <div class="toggle-switch"></div>
+                                                    <span class="text-slate-500 text-sm flex items-center">plugged_in</span>
+                                                </label>
                                             </div>
                                         </div>
                                     </div>

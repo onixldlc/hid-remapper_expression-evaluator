@@ -1,0 +1,35 @@
+.toggle-switch {
+    position: relative;
+    width: 32px;
+    height: 16px;
+    background-color: rgb(51, 65, 85);
+    border-radius: 9999px;
+    cursor: pointer;
+}
+
+.toggle-switch::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    top: 2px;
+    left: 2px;
+    background-color: rgb(156, 163, 175);
+    border-radius: 9999px;
+    border: 1px solid rgb(71, 85, 105);
+    transition: all 0.3s;
+}
+
+.peer:checked + .toggle-switch {
+    background-color: rgb(37, 99, 235);
+}
+
+.peer:checked + .toggle-switch::after {
+    transform: translateX(16px);
+    border-color: white;
+}
+
+.peer:focus + .toggle-switch {
+    outline: none;
+    --tw-ring-color: rgb(30, 64, 175);
+}
