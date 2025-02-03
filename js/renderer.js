@@ -98,6 +98,8 @@ function renderEvaluations() {
         const showLiterals = document.getElementById('show_literal_operations').checked;
         evaluation.id = `evaluation_${independed_index}`;
 
+        evaluation.classList.add('evaluation_entry')
+
         // replace the index with the human readable index
         evaluation.innerHTML = evaluation.innerHTML
             .replace(/INDEX/g, independed_index)
@@ -126,8 +128,7 @@ function renderEvaluations() {
             extraInfo.hidden = true;
             extraInfo.parentElement.style.opacity=0
             extraInfo.parentElement.style.pointerEvents="none"
-        }
-        
+        }        
 
         evaluation.hidden = false;
         
