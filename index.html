@@ -15,6 +15,15 @@
 
     <link rel="stylesheet" href="/css/toggle-switch.css">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+
 </head>
 <body class="min-h-screen flex flex-col bg-gray-900 text-white">
     <div class="flex flex-col items-center bg-gray-900 text-white w-full flex-1">
@@ -97,35 +106,35 @@
                                     <div class="flex flex-row gap-2 pl-2 py-1">
                                         <div class="flex flex-col justify-between">
                                             <div class="flex flex-row">
-                                                <label class="flex flex-row justify-start items-center gap-2" for="0x000000001_input_state_binary">
+                                                <label class="flex flex-row justify-start items-center gap-2 cursor-pointer" for="0x000000001_input_state_binary">
                                                     <input class="sr-only peer" type="checkbox" id="0x000000001_input_state_binary">
                                                     <div class="toggle-switch"></div>
-                                                    <span class="text-slate-500 text-sm flex items-center">input state</span>
+                                                    <span class="text-slate-500 text-sm flex items-center">input_state</span>
                                                 </label>
                                             </div>
                                             <div class="flex flex-row">
-                                                <label class="flex flex-row justify-start items-center gap-2" for="0x000000001_prev_input_state_binary">
+                                                <label class="flex flex-row justify-start items-center gap-2 cursor-pointer" for="0x000000001_prev_input_state_binary">
                                                     <input class="sr-only peer" type="checkbox" id="0x000000001_prev_input_state_binary">
                                                     <div class="toggle-switch"></div>
-                                                    <span class="text-slate-500 text-sm flex items-center">prev input state binary</span>
+                                                    <span class="text-slate-500 text-sm flex items-center">prev_input_state_binary</span>
                                                 </label>
                                             </div>
                                             <div class="flex flex-row">
-                                                <label class="flex flex-row justify-start items-center gap-2" for="0x000000001_tap_state">
+                                                <label class="flex flex-row justify-start items-center gap-2 cursor-pointer" for="0x000000001_tap_state">
                                                     <input class="sr-only peer" type="checkbox" id="0x000000001_tap_state">
                                                     <div class="toggle-switch"></div>
                                                     <span class="text-slate-500 text-sm flex items-center">tap_state</span>
                                                 </label>
                                             </div>
                                             <div class="flex flex-row">
-                                                <label class="flex flex-row justify-start items-center gap-2" for="0x000000001_hold_state">
+                                                <label class="flex flex-row justify-start items-center gap-2 cursor-pointer" for="0x000000001_hold_state">
                                                     <input class="sr-only peer" type="checkbox" id="0x000000001_hold_state">
                                                     <div class="toggle-switch"></div>
                                                     <span class="text-slate-500 text-sm flex items-center">hold_state</span>
                                                 </label>
                                             </div>
                                             <div class="flex flex-row">
-                                                <label class="flex flex-row justify-start items-center gap-2" for="0x000000001_plugged_in">
+                                                <label class="flex flex-row justify-start items-center gap-2 cursor-pointer" for="0x000000001_plugged_in">
                                                     <input class="sr-only peer" type="checkbox" id="0x000000001_plugged_in">
                                                     <div class="toggle-switch"></div>
                                                     <span class="text-slate-500 text-sm flex items-center">plugged_in</span>
@@ -219,7 +228,7 @@
                         <div class="p-2 w-full">
                             <div class="flex flex-row p-2 ">
                                 <label for="evaluation_result">result:</label>
-                                <input id="evaluation_result" type="text" class="text-center w-full ml-2 text-whiterounded-lg border-2 shadow-md rounded-lg bg-gray-800 border-slate-700" value="0" readonly>
+                                <input id="evaluation_result" type="text" class="text-center w-full ml-2 text-whiterounded-lg border-2 shadow-md rounded-md bg-gray-800 border-slate-700" value="0" readonly>
                             </div>
                         </div>
                     </div>
