@@ -101,15 +101,15 @@ const operatorFunctions = {
   plugged_in: { operands: 0, fn: () => { if (simulationEnv.plugged_in !== undefined) return simulationEnv.plugged_in; return simulationEnv.port === 0 ? 1 : 0; }},
 
   // 1 operand:
-  input_state: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('input_state') ? window.hexeses[usage].input_state : Math.floor(Math.random() * 256) },
-  input_state_binary: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('input_state_binary') ? window.hexeses[usage].input_state_binary : (Math.random() > 0.5 ? 1 : 0) },
-  prev_input_state_binary: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('prev_input_state_binary') ? window.hexeses[usage].prev_input_state_binary : (Math.random() > 0.5 ? 1 : 0) },
-  input_state_scaled: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('input_state_scaled') ? window.hexeses[usage].input_state_scaled : Math.floor(Math.random() * 256) },
-  prev_input_state: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('prev_input_state') ? window.hexeses[usage].prev_input_state : Math.floor(Math.random() * 256) },
-  prev_input_state_scaled: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('prev_input_state_scaled') ? window.hexeses[usage].prev_input_state_scaled : Math.floor(Math.random() * 256) },
-  sticky_state: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('sticky_state') ? window.hexeses[usage].sticky_state : Math.floor(Math.random() * 256) },
-  tap_state: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('tap_state') ? window.hexeses[usage].tap_state : (Math.random() > 0.5 ? 1 : 0) },
-  hold_state: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('hold_state') ? window.hexeses[usage].hold_state : (Math.random() > 0.5 ? 1 : 0) },
+  input_state: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('input_state') ? Number(window.hexeses[usage].input_state) : Math.floor(Math.random() * 256) },
+  input_state_binary: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('input_state_binary') ? Number(window.hexeses[usage].input_state_binary) : (Math.random() > 0.5 ? 1 : 0) },
+  prev_input_state_binary: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('prev_input_state_binary') ? Number(window.hexeses[usage].prev_input_state_binary) : (Math.random() > 0.5 ? 1 : 0) },
+  input_state_scaled: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('input_state_scaled') ? Number(window.hexeses[usage].input_state_scaled) : Math.floor(Math.random() * 256) },
+  prev_input_state: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('prev_input_state') ? Number(window.hexeses[usage].prev_input_state) : Math.floor(Math.random() * 256) },
+  prev_input_state_scaled: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('prev_input_state_scaled') ? Number(window.hexeses[usage].prev_input_state_scaled) : Math.floor(Math.random() * 256) },
+  sticky_state: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('sticky_state') ? Number(window.hexeses[usage].sticky_state) : Math.floor(Math.random() * 256) },
+  tap_state: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('tap_state') ? Number(window.hexeses[usage].tap_state) : (Math.random() > 0.5 ? 1 : 0) },
+  hold_state: { operands: 1, fn: ([usage]) => window.hexeses[usage] && window.hexeses[usage].hasOwnProperty('hold_state') ? Number(window.hexeses[usage].hold_state) : (Math.random() > 0.5 ? 1 : 0) },
   dup: { operands: 1, fn: ([a]) => [a, a] },
   recall: { operands: 1, fn: ([reg]) => reg >= 1 && reg <= 32 && registers[reg] !== undefined ? registers[reg] : 0 },
   port: { operands: 1, fn: ([port]) => { simulationEnv.port = port; return port; } },
@@ -226,7 +226,7 @@ function simulateRPN(expression, debugCallback) {
         operation: token
       });
       // Compute result and splice tokens.
-      const evaluatedOperands = operands.map(o => Number(o.value));
+      const evaluatedOperands = operands.map(o => /^0x[0-9A-Fa-f]+$/.test(o.value) ? o.value : Number(o.value));
       const opResult = opFunc.fn(evaluatedOperands);
       let insertedTokens = [];
       if (Array.isArray(opResult)) {
