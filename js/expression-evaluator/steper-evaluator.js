@@ -256,7 +256,7 @@ function simulateRPN(expression, debugCallback) {
       }
     }
   }
-  if (stack.length !== 1) {
+  if (stack.length > 1) {
     // if stack is not empty, push 1 last debugstack then throw error
     const spanStart = stack[0].pos;
     const spanEnd = stack[stack.length - 1].pos;
@@ -266,6 +266,11 @@ function simulateRPN(expression, debugCallback) {
       operation: "literal"
     });
     throw new Error("The expression did not reduce to a single result.");
+  }
+  if (stack.length === 0) {
+    // if stack in the end is empty, push 1 last debugstack then throw error
+    updateDebug(0, 0, { x: 0, result: 0, operation: "literal" });
+    throw new Error("The expression reduce to a empty result."); 
   }
   // Final collapsed state callback.
   if (debugCallback && typeof debugCallback.callback === "function") {
