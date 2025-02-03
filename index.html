@@ -9,6 +9,8 @@
     <script src="/js/expression-evaluator/steper-evaluator.js"></script>
     <script src="/js/expression-evaluator/expression-hexes.js"></script>
 
+    <script src="//unpkg.com/alpinejs" defer></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen flex flex-col bg-gray-900 text-white">
@@ -109,13 +111,12 @@
                 </div>
                 <div id="to_hide_evaluation" >
                     <div id="evaluation" class="h-fit flex flex-col flex-wrap bg-gray-800 justify-start p-1.5 rounded-xl shadow-md">
-                        <div class="text-lg font-semibold ml-2 mt-2 mb-4">Evaluation:</div>
-                        <div id="evaluation-list" class="flex-1 flex flex-wrap w-full">
-                            <!-- <div id="evaluation_template" class="flex-1 w-full max-h-[50px]"> -->
+                        <div class="text-lg font-semibold ml-2 mt-2 mb-4">Evaluation</div>
+                        <div id="evaluation_list" class="flex-1 flex flex-col w-full">
                             <div id="evaluation_template" class="flex-1 w-full">
-                                <div class="flex-1 flex flex-col relative border-slate-600 border-2 rounded-lg p-2 w-full justify-center items-center duration-300 min-h-[50px] overflow-hidden">
+                                <div class="flex-1 flex flex-col relative border-slate-600 border-2 rounded-lg p-2 w-full justify-center items-center duration-500 min-h-[50px] overflow-hidden">
                                     <div class="flex flex-row w-full">
-                                        <div>evaluating:</div>
+                                        <div class="w-[100px]">step INDEX:</div>
                                         <div class="flex flex-row w-full justify-center text-center items-center">
                                             <div class="text-center">PLAIN_EVALUATION</div>
                                             <div class="text-center text-lg mx-5">→</div>
@@ -123,13 +124,13 @@
                                         </div>
                                         <div>
                                             <label for="extra-info-INDEX" class="flex justify-center items-center relative w-[24px] h-[24px] cursor-pointer">
-                                                <div class="absolute w-[16px] h-[2px] bg-white"></div>
-                                                <div class="absolute w-[16px] h-[2px] bg-white rotate-90"></div>
+                                                <div id="horizontal-extra-info-INDEX" class="absolute w-[16px] h-[2px] bg-white"></div>
+                                                <div id="vertical-extra-info-INDEX" class="absolute w-[16px] h-[2px] bg-white rotate-90 duration-200"></div>
                                             </label>
                                             <input type="checkbox" name="extra-info-INDEX" id="extra-info-INDEX" hidden>
                                         </div>
                                     </div>
-                                    <div id="hide_detail_INDEX" class="w-full duration-300 max-h-[0px]">
+                                    <div id="hide_detail_INDEX" class="w-full duration-500 ease-in-out max-h-[0px]">
                                         <div class="pt-3 w-full">
                                             <div class="text-gray-400">details</div>
                                             <div class="ml-3 text-gray-400">
@@ -261,6 +262,57 @@
     </script>
 
     <script>
+        function renderEvaluations() {
+            // Get the template
+            const template = document.getElementById('evaluation_template');
+            const container = document.getElementById('evaluation_list');
+            
+            // Clear existing evaluations
+            container.querySelectorAll('.evaluation_entry').forEach((entry) => entry.remove());
+
+            // Create elements for each debug step
+            debugStack.forEach((info, index) => {
+                // Clone template
+                const evaluation = template.cloneNode(true);
+                
+                // Set unique ID and remove template ID
+                evaluation.id = `evaluation_${index}`;
+                
+                // Replace placeholders
+                evaluation.innerHTML = evaluation.innerHTML
+                    .replace(/INDEX/g, index)
+                    .replace('PLAIN_EVALUATION', info.plainEvaluation)
+                    .replace('EVAL_RESULT', info.x !== null ? info.x : '')
+                    .replace('OPERATOR', info.operation)
+                    .replace('XVALUE', info.x !== null ? info.x : 'N/A')
+                    .replace('YVALUE', info.y !== null ? info.y : 'N/A')
+                    .replace('ZVALUE', info.z !== null ? info.z : 'N/A')
+                    .replace('HIGHLIGHTED_EXPRESSION', info.highlightedExpression);
+
+
+                evaluation.classList.add('evaluation_entry')
+                    
+                // Add event listener for detail toggle
+                const checkbox = evaluation.querySelector(`#extra-info-${index}`);
+                const detailsDiv = evaluation.querySelector(`#hide_detail_${index}`);
+                const verticalBar = evaluation.querySelector(`#vertical-extra-info-${index}`);
+                
+                if (checkbox && detailsDiv) {
+                    checkbox.addEventListener('change', (e) => {
+                        detailsDiv.style.maxHeight = e.target.checked ? '500px' : '0px';
+                        verticalBar.classList.toggle('rotate-90', !e.target.checked);
+                    });
+                }
+                
+                // Append to container
+                container.appendChild(evaluation);
+            });
+        }
+        
+
+    </script>
+
+    <script>
         function init_register() {
             const template = document.getElementById("register_template");
             const container = template.parentElement;
@@ -325,6 +377,7 @@
                     console.log("Debug Info:", info);
                 }
                 });
+                renderEvaluations()
                 console.log("Final Result:", result);
             } catch (e) {
                 console.error(e.message);
