@@ -1,0 +1,28 @@
+.button {
+    /* Base styles */
+    padding: 0.25rem;  /* p-1 */
+    width: 4rem;       /* w-16 */
+    border-radius: 0.5rem; /* rounded-lg */
+    border-width: 2px;     /* border-2 */
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); /* shadow-md */
+    cursor: pointer;
+
+    /* Normal state */
+    background-color: #3062d6;
+    border-color: #3062d6;
+    color: white;
+
+    /* Hover state */
+    &:hover {
+        background-color: #233358;
+        border-color: #233358;
+        color: rgb(229 231 235); /* text-gray-200 */
+    }
+
+    /* Active state */
+    &:active {
+        background-color: #0f172a;
+        border-color: #0f172a;
+        color: rgb(107 114 128); /* text-gray-500 */
+    }
+}

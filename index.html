@@ -14,10 +14,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <link rel="stylesheet" href="/css/toggle-switch.css">
+    <link rel="stylesheet" href="/css/button.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
     <style>
         * {
             font-family: 'Roboto', sans-serif;
@@ -54,20 +56,12 @@
                             </div>
                         </div>
                         <div class="w-full flex flex-row items-center justify-end ">
-                            <input type="button" value="Eval" class="
-                            p-1 w-16 rounded-lg border-2 shadow-md cursor-pointer 
-                            
-                            bg-[#3062d6] 
-                            border-[#3062d6]  
-                            text-white 
-                            
-                            hover:bg-[#233358] 
-                            hover:border-[#233358] 
-                            hover:text-gray-200
-                            
-                            active:bg-[#0f172a] 
-                            active:border-[#0f172a]
-                            active:text-gray-500 " onclick="show_expression_evaluator()">
+                            <input 
+                                type="button" 
+                                value="Eval" 
+                                class="button" 
+                                onclick="show_expression_evaluator()"
+                            >
                         </div>
                     </div>
                 </div>
