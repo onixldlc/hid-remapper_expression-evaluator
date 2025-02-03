@@ -255,6 +255,7 @@
             // if debugStack is empty, hide the evaluation section
             if (debugStack.length === 0) {
                 document.getElementById('to_hide_evaluation').hidden = true;
+                return
             } else {
                 document.getElementById('to_hide_evaluation').hidden = false;
             }
@@ -367,8 +368,6 @@
                 container.appendChild(evaluation);
             }
         }
-        
-
     </script>
 
     <script>
@@ -424,13 +423,15 @@
 
             try {
                 debugStack.length = 0;
-                const expr = expression;
 
-                if(expression === "") {
+                if(expression === "" && expresion_input_element.value === "") {
                     document.getElementById('to_hide_evaluation').hidden = true;
                     throw new Error("Expression is empty");
                 }
 
+                expresion_input_element.dispatchEvent(new Event('input'));
+
+                const expr = expression;
                 const result = debugEvaluate(expr, {
                 callback: (info) => {
                     debugStack.push(info)
