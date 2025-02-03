@@ -119,6 +119,16 @@ function renderEvaluations() {
             result.remove();
         }
 
+        // hide (NOT REMOVE!!! so that the sizing is the same) the extra-info checkbox and lable since it is not needed
+        const extraInfo = evaluation.querySelector(`#extra-info-${independed_index}`);
+        window.test = extraInfo;
+        if (extraInfo) {
+            extraInfo.hidden = true;
+            extraInfo.parentElement.style.opacity=0
+            extraInfo.parentElement.style.pointerEvents="none"
+        }
+        
+
         evaluation.hidden = false;
         
         container.appendChild(evaluation);
