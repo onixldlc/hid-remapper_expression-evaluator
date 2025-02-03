@@ -319,6 +319,17 @@
                     evaluation.querySelector('.evaluation_result').remove();
                 }
                     
+                // If operator store then the right side should be the register name i.e. R1, R2, etc, and the left side should be the value of the register
+                if(info.operation === 'store'){
+                    evaluation.querySelector('.evaluation_text').textContent = info.x;
+                    evaluation.querySelector('.evaluation_result').textContent = `R${info.y}`;
+                }
+
+                // If operator recall then the left side should be the register name i.e. R1, R2, etc 
+                if(info.operation === 'recall'){
+                    evaluation.querySelector('.evaluation_text').textContent = `R${info.x}`;
+                }
+
                 
                 // Append to container
                 container.appendChild(evaluation);

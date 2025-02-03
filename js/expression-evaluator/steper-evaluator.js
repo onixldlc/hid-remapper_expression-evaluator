@@ -175,6 +175,7 @@ function simulateRPN(expression, debugCallback) {
   let tokens = expression.trim().split(/\s+/);
 
   const updateDebug = (highlightStart, highlightEnd, extra = {}) => {
+    console.log(extra)
     if (debugCallback && typeof debugCallback.callback === "function") {
       const exactEvaluation = tokens.slice(highlightStart, highlightEnd + 1).join(" ");
       const defaultData = {
@@ -184,15 +185,17 @@ function simulateRPN(expression, debugCallback) {
         plainEvaluation: exactEvaluation,
         startPos: highlightStart,
         endPos: highlightEnd,
-        x: null,
-        y: null,
-        z: null,
+        x: extra.operands?.[0]?.value || null,
+        y: extra.operands?.[1]?.value || null,
+        z: extra.operands?.[2]?.value || null,
         operation: "literal",
         stack: [],
         registers,
-        result: extra.x
+        result: extra.result
       };
-      debugCallback.callback(Object.assign({}, defaultData, extra));
+      
+      const { operands, result, ...cleanExtra } = extra;
+      debugCallback.callback(Object.assign({}, defaultData, cleanExtra));
     }
   };
 
@@ -203,7 +206,11 @@ function simulateRPN(expression, debugCallback) {
     const token = tokens[i];
     if (operatorFunctions[token] === undefined) {
       // Literal token.
-      updateDebug(i, i, { x: Number(token), operation: "literal" });
+      updateDebug(i, i, { 
+        x: token,  // Raw token value
+        result: Number(token), // Evaluated number
+        operation: "literal" 
+      });
       stack.push({ value: token, pos: i });
       i++;
     } else {
@@ -230,8 +237,9 @@ function simulateRPN(expression, debugCallback) {
           stack.push({ value: insertedTokens[k], pos: spanStart + k });
         }
         updateDebug(spanStart, spanEnd + insertedTokens.length - 1, { 
-          x: insertedTokens.join(" "), 
-          operation: token,
+          operands,  // This gives us x,y,z from original values
+          result: insertedTokens.join(" "),  // Array results go to result field
+          operation: token
         });
         tokens.splice(spanStart, spanEnd - spanStart + 1, ...insertedTokens);
         i = spanStart + insertedTokens.length;
@@ -239,8 +247,9 @@ function simulateRPN(expression, debugCallback) {
         insertedTokens = [opResult.toString()];
         stack.push({ value: opResult, pos: spanStart });
         updateDebug(spanStart, spanEnd, { 
-          x: opResult, 
-          operation: token,
+          operands,  // Source for x,y,z values
+          result: opResult,  // Single value result
+          operation: token
         });
         tokens.splice(spanStart, spanEnd - spanStart + 1, opResult.toString());
         i = spanStart + 1;
