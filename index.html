@@ -31,21 +31,23 @@
                     <div class="flex flex-row">
                         <textarea id="expression_input" class="w-full h-[300px] bg-gray-800 text-white p-2 rounded-lg border-slate-700 border-2 shadow-md" placeholder="Enter your HID remapper expression here..."></textarea>
                     </div>
-                    <div class="flex flex-row justify-end">
-                        <input type="button" value="Debug" class="
-                        p-2 rounded-lg border-2 shadow-md mt-2 cursor-pointer 
-                        
-                        bg-[#3062d6] 
-                        border-[#3062d6]  
-                        text-white 
-                        
-                        hover:bg-[#233358] 
-                        hover:border-[#233358] 
-                        hover:text-gray-200
-                        
-                        active:bg-[#0f172a] 
-                        active:border-[#0f172a]
-                        active:text-gray-500 " onclick="start_evaluator()">
+                    <div class="flex flex-row w-full mt-2">
+                        <div class="w-full flex flex-row items-center justify-end ">
+                            <input type="button" value="Eval" class="
+                            p-1 w-16 rounded-lg border-2 shadow-md cursor-pointer 
+                            
+                            bg-[#3062d6] 
+                            border-[#3062d6]  
+                            text-white 
+                            
+                            hover:bg-[#233358] 
+                            hover:border-[#233358] 
+                            hover:text-gray-200
+                            
+                            active:bg-[#0f172a] 
+                            active:border-[#0f172a]
+                            active:text-gray-500 " onclick="show_expression_evaluator()">
+                        </div>
                     </div>
                 </div>
                 <div id="to_hide_config" hidden>
@@ -169,7 +171,6 @@
         <div class="w-1/4">
             <div class="h-full bg-gray-800 p-2">
                 <div>
-
                     <div class="text-lg font-semibold ml-2 mt-2 mb-4">Registers</div>
                     <div class="h-[2px] w-full mx-auto mb-1 bg-slate-700"></div>
 
@@ -180,26 +181,23 @@
                                 <input name="REGISTERID" type="text" class="text-end w-full bg-gray-800 text-white" placeholder="REGISTERID">
                             </div>
                         </div>
-                        
-                        
-
                     </div>
+                </div>
 
+                <div>
+                    <div class="text-lg font-semibold ml-2 mt-2 mb-4">Result</div>
+                    <div class="h-[2px] w-full mx-auto mb-1 bg-slate-700"></div>
+
+                    <div class="flex flex-1 flex-wrap">
+                        <div class="p-2 w-full">
+                            <div class="flex flex-row p-2 ">
+                                <label for="evaluation_result">result:</label>
+                                <input id="evaluation_result" type="text" class="text-center w-full ml-2 text-whiterounded-lg border-2 shadow-md rounded-lg bg-gray-800 border-slate-700" value="0" readonly>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <!-- <div class="text-lg font-semibold mb-4">Explanation</div>
-                <div class="text-sm mb-4">
-                    <span class="text-red-500">/a/ gm</span> <br>
-                    a matches the character 'a' with index 97 (61 or 141) literally (case sensitive) <br><br>
-                    <strong>Global pattern flags:</strong><br>
-                    <strong>g</strong> modifier: global. All matches (don't return after first match) <br>
-                    <strong>m</strong> modifier: multi-line. Causes <span class="text-red-500">^</span> and <span class="text-red-500">$</span> to match the begin/end of each line (not only begin/end of string)
-                </div>
-    
-                <div class="text-lg font-semibold mb-4">Evaluation Information</div>
-                <div class="text-sm">
-                    Your HID remapper expression does not match the subject string.<br>
-                    Try launching the debugger to find out why.
-                </div> -->
+
             </div>
         </div>
     </div>
@@ -283,8 +281,21 @@
                 const evaluation = template.cloneNode(true);
                 const humanIndex = index + 1;
                 
+                // Check if we should skip literal operations
+                // const showLiterals = document.getElementById('show_literal_operations').checked;
+                // if (!showLiterals && info.operation === 'literal') {
+                //     return; // Skip this evaluation step
+                // }
+                
                 // Set unique ID and remove template ID
                 evaluation.id = `evaluation_${humanIndex}`;
+
+                // add span to highlight the expression using the start and end index in the info
+                // Extract the highlighted expression
+                const originalExpr = info.highlightedExpression;
+                const highlightedExpr = originalExpr.replace(/\[(.*?)\]/g, (match, group) => {
+                    return `[<span class="text-yellow-500">${group}</span>]`;
+                });
                 
                 // Replace placeholders
                 evaluation.innerHTML = evaluation.innerHTML
@@ -295,7 +306,7 @@
                     .replace('XVALUE', info.x !== null ? info.x : 'N/A')
                     .replace('YVALUE', info.y !== null ? info.y : 'N/A')
                     .replace('ZVALUE', info.z !== null ? info.z : 'N/A')
-                    .replace('HIGHLIGHTED_EXPRESSION', info.highlightedExpression);
+                    .replace('HIGHLIGHTED_EXPRESSION', highlightedExpr);
 
                 // Show the evaluation
                 evaluation.hidden = false;
@@ -370,8 +381,8 @@
         let expression = "";
         let expresion_input_element = document.getElementById('expression_input');
 
-        function start_evaluator(){
-            console.log('starting to evaluate...');
+        function show_expression_evaluator(){
+            console.log('starting to evaluate with steps...');
 
             try {
                 debugStack.length = 0;
@@ -390,6 +401,7 @@
                 });
                 renderEvaluations()
                 console.log("Final Result:", result);
+                evaluation_result.value = result;
                 showPopup("Success", "Expression evaluated successfully", "success");
             } catch (e) {
                 console.error(e.message);
