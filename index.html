@@ -27,7 +27,7 @@
         <div class="w-full">
             <div class="h-full w-full flex flex-col bg-gray-700 p-4 gap-2">
                 <div class="bg-gray-800 p-3 rounded-xl shadow-md">
-                    <div class="text-lg mb-2 font-semibold">HID remapper</div>
+                    <div class="text-lg mb-2 font-semibold">Expression</div>
                     <div class="flex flex-row">
                         <textarea id="expression_input" class="w-full h-[300px] bg-gray-800 text-white p-2 rounded-lg border-slate-700 border-2 shadow-md" placeholder="Enter your HID remapper expression here..."></textarea>
                     </div>
@@ -109,11 +109,11 @@
                         </div>
                     </div>
                 </div>
-                <div id="to_hide_evaluation" >
+                <div id="to_hide_evaluation" hidden>
                     <div id="evaluation" class="h-fit flex flex-col flex-wrap bg-gray-800 justify-start p-1.5 rounded-xl shadow-md">
                         <div class="text-lg font-semibold ml-2 mt-2 mb-4">Evaluation</div>
                         <div id="evaluation_list" class="flex-1 flex flex-col w-full">
-                            <div id="evaluation_template" class="flex-1 w-full">
+                            <div id="evaluation_template" class="flex-1 w-full" hidden>
                                 <div class="flex-1 flex flex-col relative border-slate-600 border-2 rounded-lg p-2 w-full justify-center items-center duration-500 min-h-[50px] overflow-hidden">
                                     <div class="flex flex-row w-full">
                                         <div class="w-[100px]">step INDEX:</div>
@@ -270,17 +270,25 @@
             // Clear existing evaluations
             container.querySelectorAll('.evaluation_entry').forEach((entry) => entry.remove());
 
+            // if debugStack is empty, hide the evaluation section
+            if (debugStack.length === 0) {
+                document.getElementById('to_hide_evaluation').hidden = true;
+            } else {
+                document.getElementById('to_hide_evaluation').hidden = false;
+            }
+
             // Create elements for each debug step
             debugStack.forEach((info, index) => {
                 // Clone template
                 const evaluation = template.cloneNode(true);
+                const humanIndex = index + 1;
                 
                 // Set unique ID and remove template ID
-                evaluation.id = `evaluation_${index}`;
+                evaluation.id = `evaluation_${humanIndex}`;
                 
                 // Replace placeholders
                 evaluation.innerHTML = evaluation.innerHTML
-                    .replace(/INDEX/g, index)
+                    .replace(/INDEX/g, humanIndex)
                     .replace('PLAIN_EVALUATION', info.plainEvaluation)
                     .replace('EVAL_RESULT', info.x !== null ? info.x : '')
                     .replace('OPERATOR', info.operation)
@@ -289,13 +297,15 @@
                     .replace('ZVALUE', info.z !== null ? info.z : 'N/A')
                     .replace('HIGHLIGHTED_EXPRESSION', info.highlightedExpression);
 
+                // Show the evaluation
+                evaluation.hidden = false;
 
                 evaluation.classList.add('evaluation_entry')
                     
                 // Add event listener for detail toggle
-                const checkbox = evaluation.querySelector(`#extra-info-${index}`);
-                const detailsDiv = evaluation.querySelector(`#hide_detail_${index}`);
-                const verticalBar = evaluation.querySelector(`#vertical-extra-info-${index}`);
+                const checkbox = evaluation.querySelector(`#extra-info-${humanIndex}`);
+                const detailsDiv = evaluation.querySelector(`#hide_detail_${humanIndex}`);
+                const verticalBar = evaluation.querySelector(`#vertical-extra-info-${humanIndex}`);
                 
                 if (checkbox && detailsDiv) {
                     checkbox.addEventListener('change', (e) => {
@@ -368,6 +378,7 @@
                 const expr = expression;
 
                 if(expression === "") {
+                    document.getElementById('to_hide_evaluation').hidden = true;
                     throw new Error("Expression is empty");
                 }
 
@@ -379,8 +390,10 @@
                 });
                 renderEvaluations()
                 console.log("Final Result:", result);
+                showPopup("Success", "Expression evaluated successfully", "success");
             } catch (e) {
                 console.error(e.message);
+                showPopup("Error", e.message, "error");
             }
             // let expression = expresion_input_element.value;
             // let hexeses = processHexadecimals(expression);
