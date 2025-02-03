@@ -156,9 +156,9 @@
                                     <div class="flex flex-row w-full">
                                         <div class="w-[100px]">step INDEX:</div>
                                         <div class="flex flex-row w-full justify-center text-center items-center">
-                                            <div class="text-center">PLAIN_EVALUATION</div>
-                                            <div class="text-center text-lg mx-5">→</div>
-                                            <div class="text-center">EVAL_RESULT</div>
+                                            <div class="text-center evaluation_text">PLAIN_EVALUATION</div>
+                                            <div class="text-center text-lg mx-5 evaluation_arrow">→</div>
+                                            <div class="text-center evaluation_result">EVAL_RESULT</div>
                                         </div>
                                         <div>
                                             <label for="extra-info-INDEX" class="flex justify-center items-center relative w-[24px] h-[24px] cursor-pointer">
@@ -177,7 +177,7 @@
                                                     <div class="w-full">OPERATOR</div>
                                                 </div>
                                                 <div class="flex flex-row">
-                                                    <div class="w-[145px]">- Y:</div>
+                                                    <div class="w-[145px]">- X:</div>
                                                     <div class="w-full">XVALUE</div>
                                                 </div>
                                                 <div class="flex flex-row">
@@ -312,6 +312,13 @@
                         verticalBar.classList.toggle('rotate-90', !e.target.checked);
                     });
                 }
+
+                // operator is final then remove the arrow and the right side value
+                if(info.operation === 'final'){
+                    evaluation.querySelector('.evaluation_arrow').remove();
+                    evaluation.querySelector('.evaluation_result').remove();
+                }
+                    
                 
                 // Append to container
                 container.appendChild(evaluation);
