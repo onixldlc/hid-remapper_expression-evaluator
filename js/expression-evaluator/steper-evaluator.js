@@ -189,7 +189,8 @@ function simulateRPN(expression, debugCallback) {
         z: null,
         operation: "literal",
         stack: [],
-        registers
+        registers,
+        result: extra.x
       };
       debugCallback.callback(Object.assign({}, defaultData, extra));
     }
@@ -218,30 +219,30 @@ function simulateRPN(expression, debugCallback) {
       }
       const spanStart = operands[0].pos;
       const spanEnd = i;
-      // Pre-collapse debug callback.
-      updateDebug(spanStart, spanEnd, {
-        x: operands[0].value,
-        y: operands[1] ? operands[1].value : null,
-        z: operands[2] ? operands[2].value : null,
-        operation: token
-      });
+
       // Compute result and splice tokens.
       const evaluatedOperands = operands.map(o => /^0x[0-9A-Fa-f]+$/.test(o.value) ? o.value : Number(o.value));
       const opResult = opFunc.fn(evaluatedOperands);
       let insertedTokens = [];
       if (Array.isArray(opResult)) {
         insertedTokens = opResult.map(r => r.toString());
-        tokens.splice(spanStart, spanEnd - spanStart + 1, ...insertedTokens);
         for (let k = 0; k < insertedTokens.length; k++) {
           stack.push({ value: insertedTokens[k], pos: spanStart + k });
         }
-        updateDebug(spanStart, spanStart + insertedTokens.length - 1, { x: insertedTokens.join(" "), operation: "literal" });
+        updateDebug(spanStart, spanEnd + insertedTokens.length - 1, { 
+          x: insertedTokens.join(" "), 
+          operation: token,
+        });
+        tokens.splice(spanStart, spanEnd - spanStart + 1, ...insertedTokens);
         i = spanStart + insertedTokens.length;
       } else {
         insertedTokens = [opResult.toString()];
-        tokens.splice(spanStart, spanEnd - spanStart + 1, opResult.toString());
         stack.push({ value: opResult, pos: spanStart });
-        updateDebug(spanStart, spanStart, { x: opResult, operation: "literal" });
+        updateDebug(spanStart, spanEnd, { 
+          x: opResult, 
+          operation: token,
+        });
+        tokens.splice(spanStart, spanEnd - spanStart + 1, opResult.toString());
         i = spanStart + 1;
       }
     }

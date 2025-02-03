@@ -289,7 +289,7 @@
                 evaluation.innerHTML = evaluation.innerHTML
                     .replace(/INDEX/g, humanIndex)
                     .replace('PLAIN_EVALUATION', info.plainEvaluation)
-                    .replace('EVAL_RESULT', info.x !== null ? info.x : '')
+                    .replace('EVAL_RESULT', info.result !== null ? info.result : '')
                     .replace('OPERATOR', info.operation)
                     .replace('XVALUE', info.x !== null ? info.x : 'N/A')
                     .replace('YVALUE', info.y !== null ? info.y : 'N/A')
@@ -437,7 +437,7 @@
                         clone.innerHTML = clone.innerHTML.replace(/0x000000001/g, hex);
                         clone.querySelectorAll('input').forEach(input => {
                             input.addEventListener('input', () => {
-                                const propName = input.name.replace(hex + '_', '');
+                                const propName = input.id.replace(hex + '_', '');
                                 if (input.type === 'checkbox') {
                                     window.hexeses[hex][propName] = input.checked;
                                 } else {
