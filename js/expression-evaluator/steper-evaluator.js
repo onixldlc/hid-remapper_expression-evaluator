@@ -257,6 +257,14 @@ function simulateRPN(expression, debugCallback) {
     }
   }
   if (stack.length !== 1) {
+    // if stack is not empty, push 1 last debugstack then throw error
+    const spanStart = stack[0].pos;
+    const spanEnd = stack[stack.length - 1].pos;
+    updateDebug(spanStart, spanEnd, {
+      operands: stack.map(o => /^0x[0-9A-Fa-f]+$/.test(o.value) ? o.value : Number(o.value)),
+      result: stack[0].value,
+      operation: "literal"
+    });
     throw new Error("The expression did not reduce to a single result.");
   }
   // Final collapsed state callback.

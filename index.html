@@ -247,7 +247,8 @@
             const template = document.getElementById('evaluation_template');
             const container = document.getElementById('evaluation_list');
             let independed_index=1;
-            
+            let final_found = false
+
             // Clear existing evaluations
             container.querySelectorAll('.evaluation_entry').forEach((entry) => entry.remove());
 
@@ -264,8 +265,6 @@
                 let humanIndex
                 const evaluation = template.cloneNode(true);
                 const showLiterals = document.getElementById('show_literal_operations').checked;
-
-                // Use independent index for non-literal operations, or normal index for all operations if showLiterals is true
 
                 // Check if we should skip literal operations
                 if (!showLiterals && info.operation === 'literal') {
@@ -317,6 +316,7 @@
                 if(info.operation === 'final'){
                     evaluation.querySelector('.evaluation_arrow').remove();
                     evaluation.querySelector('.evaluation_result').remove();
+                    final_found = true;
                 }
                     
                 // If operator store then the right side should be the register name i.e. R1, R2, etc, and the left side should be the value of the register
@@ -334,6 +334,38 @@
                 // Append to container
                 container.appendChild(evaluation);
             });
+
+            // if final_found is false then print the rest of the evaluations as the final result
+            if(!final_found){
+                const evaluation = template.cloneNode(true);
+                const showLiterals = document.getElementById('show_literal_operations').checked;
+                evaluation.id = `evaluation_${independed_index}`;
+
+                // replace the index with the human readable index
+                evaluation.innerHTML = evaluation.innerHTML
+                    .replace(/INDEX/g, independed_index)
+                    .replace('PLAIN_EVALUATION', debugStack[debugStack.length-1].fullExpression)
+
+                // Add null checks before removing elements
+                const hideDetail = evaluation.querySelector(`#hide_detail_${independed_index}`);
+                if (hideDetail) {
+                    hideDetail.remove();
+                }
+
+                const arrow = evaluation.querySelector('.evaluation_arrow');
+                if (arrow) {
+                    arrow.remove();
+                }
+
+                const result = evaluation.querySelector('.evaluation_result');
+                if (result) {
+                    result.remove();
+                }
+
+                evaluation.hidden = false;
+                
+                container.appendChild(evaluation);
+            }
         }
         
 
@@ -410,6 +442,7 @@
                 evaluation_result.value = result;
                 showPopup("Success", "Expression evaluated successfully", "success");
             } catch (e) {
+                renderEvaluations()
                 console.error(e.message);
                 showPopup("Error", e.message, "error");
             }
