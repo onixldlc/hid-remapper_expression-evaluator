@@ -224,7 +224,14 @@ function simulateRPN(expression, debugCallback) {
       for (let j = 0; j < count; j++) {
         operands.unshift(stack.pop());
       }
-      const spanStart = operands[0].pos;
+
+      let startPost = i
+
+      if(operands.length > 0){
+        startPost = operands[0].pos
+      }
+      
+      const spanStart = startPost;
       const spanEnd = i;
 
       // Compute result and splice tokens.
