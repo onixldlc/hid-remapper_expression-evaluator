@@ -12,7 +12,7 @@ function showPopup(title, message, type, duration=3000) {
             bgColor = "bg-red-600";
             break;
         case "warning":
-            bgColor = "bg-yellow-600";
+            bgColor = "bg-yellow-500";
             break;
         case "info":
             bgColor = "bg-blue-600";
