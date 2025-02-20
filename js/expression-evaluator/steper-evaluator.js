@@ -272,12 +272,12 @@ function simulateRPN(expression, debugCallback) {
       result: stack[0].value,
       operation: "literal"
     });
-    throw new Error("The expression did not reduce to a single result.", { cause: "error" });
+    throw new Error("The expression did not reduced to a single result.", { cause: "error" });
   }
   if (stack.length === 0) {
     // if stack in the end is empty, push 1 last debugstack then throw error
     updateDebug(0, 0, { x: 0, result: 0, operation: "literal" });
-    throw new Error("The expression reduce to a empty result.", { cause: "warning" }); 
+    throw new Error("The expression reduced to an empty result.", { cause: "warning" }); 
   }
   // Final collapsed state callback.
   if (debugCallback && typeof debugCallback.callback === "function") {
