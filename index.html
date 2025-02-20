@@ -249,7 +249,7 @@
 
                 if(expresion_input_element.value === "") {
                     document.getElementById('to_hide_evaluation').hidden = true;
-                    throw new Error("Expression is empty");
+                    throw new Error("Expression is empty", { type: "warning" });
                 }
 
                 if(expression === "") {
@@ -272,7 +272,12 @@
             } catch (e) {
                 renderEvaluations()
                 console.error(e.message);
-                showPopup("Error", e.message, "error");
+                console.log(e.cause);
+                if(e.cause === "warning") {
+                    showPopup("Warning", e.message, e.cause);
+                } else{
+                    showPopup("Error", e.message, e.cause);
+                }
             }
         }
     </script>

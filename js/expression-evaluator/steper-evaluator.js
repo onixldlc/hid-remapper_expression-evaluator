@@ -73,7 +73,7 @@ const operatorFunctions = {
   sub: { operands: 2, fn: ([a, b]) => a - b },
   mul: { operands: 2, fn: ([a, b]) => a * b },
   div: { operands: 2, fn: ([a, b]) => b === 0 ? 0 : a / b },
-  mod: { operands: 2, fn: ([a, b]) => { if (b === 0) throw new Error("Evaluation error: modulo by zero"); return a % b; } },
+  mod: { operands: 2, fn: ([a, b]) => { if (b === 0) throw new Error("Evaluation error: modulo by zero", { cause: "error" }); return a % b; } },
   eq: { operands: 2, fn: ([a, b]) => a === b ? 1 : 0 },
   gt: { operands: 2, fn: ([a, b]) => a > b ? 1 : 0 },
   lt: { operands: 2, fn: ([a, b]) => a < b ? 1 : 0 },
@@ -218,7 +218,7 @@ function simulateRPN(expression, debugCallback) {
       const opFunc = operatorFunctions[token];
       const count = opFunc.operands;
       if (stack.length < count) {
-        throw new Error(`Insufficient operands for operator '${token}'`);
+        throw new Error(`Insufficient operands for operator '${token}'`, { cause: "error" });
       }
       const operands = [];
       for (let j = 0; j < count; j++) {
@@ -272,12 +272,12 @@ function simulateRPN(expression, debugCallback) {
       result: stack[0].value,
       operation: "literal"
     });
-    throw new Error("The expression did not reduce to a single result.");
+    throw new Error("The expression did not reduce to a single result.", { cause: "error" });
   }
   if (stack.length === 0) {
     // if stack in the end is empty, push 1 last debugstack then throw error
     updateDebug(0, 0, { x: 0, result: 0, operation: "literal" });
-    throw new Error("The expression reduce to a empty result."); 
+    throw new Error("The expression reduce to a empty result.", { cause: "warning" }); 
   }
   // Final collapsed state callback.
   if (debugCallback && typeof debugCallback.callback === "function") {
